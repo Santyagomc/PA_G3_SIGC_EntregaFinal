@@ -1,0 +1,32 @@
+# kafka-consumer-groups --describe
+# 2026-10-15 00:10:54
+$ kexec bash -c /opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server kafka:29092 --list; echo; for g in sigc-audit sigc-notifications sigc-dlt; do /opt/kafka/bin/kafka-consumer-groups.sh --bootstrap-server kafka:29092 --describe --group $g; echo; done
+
+sigc-dlt
+console-consumer-25626
+sigc-audit
+sigc-notifications
+
+
+GROUP           TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                    HOST            CLIENT-ID
+sigc-audit      audit-events    2          -               0               -               sigcapi-2-2f503485-6680-4f6c-a1e6-d0a32e30804e /172.22.0.5     sigcapi-2
+sigc-audit      audit-events    0          2               2               0               sigcapi-0-7ca874aa-3f21-4efd-aab0-cef5f95f6ca0 /172.22.0.5     sigcapi-0
+sigc-audit      audit-events    1          -               0               -               sigcapi-1-63cb005e-e58c-47bf-b14b-7616c600f1b0 /172.22.0.5     sigcapi-1
+
+Error: Executing consumer group command failed due to org.apache.kafka.common.errors.TimeoutException: Timed out waiting for a node assignment. Call: describeConsumerGroups(api=FIND_COORDINATOR)
+java.util.concurrent.ExecutionException: org.apache.kafka.common.errors.TimeoutException: Timed out waiting for a node assignment. Call: describeConsumerGroups(api=FIND_COORDINATOR)
+	at java.base/java.util.concurrent.CompletableFuture.reportGet(Unknown Source)
+	at java.base/java.util.concurrent.CompletableFuture.get(Unknown Source)
+	at org.apache.kafka.common.internals.KafkaFutureImpl.get(KafkaFutureImpl.java:165)
+	at org.apache.kafka.tools.consumer.group.ConsumerGroupCommand$ConsumerGroupService.describeConsumerGroups(ConsumerGroupCommand.java:682)
+	at org.apache.kafka.tools.consumer.group.ConsumerGroupCommand$ConsumerGroupService.collectGroupsOffsets(ConsumerGroupCommand.java:698)
+	at org.apache.kafka.tools.consumer.group.ConsumerGroupCommand$ConsumerGroupService.describeGroups(ConsumerGroupCommand.java:453)
+	at org.apache.kafka.tools.consumer.group.ConsumerGroupCommand.run(ConsumerGroupCommand.java:114)
+	at org.apache.kafka.tools.consumer.group.ConsumerGroupCommand.main(ConsumerGroupCommand.java:103)
+Caused by: org.apache.kafka.common.errors.TimeoutException: Timed out waiting for a node assignment. Call: describeConsumerGroups(api=FIND_COORDINATOR)
+
+
+GROUP           TOPIC            PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                    HOST            CLIENT-ID
+sigc-dlt        audit-events.DLT 1          -               0               -               sigcapi-0-21c57c88-ef56-49af-9725-7c84efc8cbf7 /172.22.0.5     sigcapi-0
+sigc-dlt        audit-events.DLT 2          -               0               -               sigcapi-0-21c57c88-ef56-49af-9725-7c84efc8cbf7 /172.22.0.5     sigcapi-0
+sigc-dlt        audit-events.DLT 0          -               0               -               sigcapi-0-21c57c88-ef56-49af-9725-7c84efc8cbf7 /172.22.0.5     sigcapi-0

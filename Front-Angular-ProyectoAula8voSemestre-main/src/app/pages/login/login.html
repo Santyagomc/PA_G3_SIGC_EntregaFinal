@@ -1,0 +1,84 @@
+<div class="auth-page">
+  <div class="auth-page__wrap">
+    <div class="auth-page__brand">
+      <div class="auth-page__logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+      </div>
+      <h1 class="auth-page__title">SIGC PQRS</h1>
+      <p class="auth-page__desc">
+        Sistema de Gestión de Peticiones, Quejas, Reclamos y Sugerencias
+      </p>
+      <p class="auth-page__meta">Gobernación del Huila</p>
+    </div>
+
+    <div class="sigc-card auth-card">
+      <div class="sigc-card__hd">
+        <h2 class="sigc-card__title" style="text-align: center">Iniciar sesión</h2>
+        <p class="sigc-card__desc" style="text-align: center">
+          Use su <strong>número de documento</strong> y contraseña (API sigcapi).
+        </p>
+      </div>
+      <div class="sigc-card__bd">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          @if (error()) {
+            <div class="auth-alert" role="alert">
+              <span>{{ error() }}</span>
+            </div>
+          }
+
+          <div class="sigc-field">
+            <label class="sigc-label" for="doc">Documento</label>
+            <input id="doc" class="sigc-input" type="text" formControlName="document" placeholder="Ej. 1075312456" [disabled]="loading()" autocomplete="username" />
+          </div>
+
+          <div class="sigc-field">
+            <label class="sigc-label" for="pw">Contraseña</label>
+            <div class="auth-password">
+              <input
+                id="pw"
+                class="sigc-input"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="Contraseña"
+                [disabled]="loading()"
+                autocomplete="current-password"
+              />
+              <button type="button" class="auth-password__toggle" (click)="togglePassword()" tabindex="-1" aria-label="Mostrar u ocultar">
+                @if (showPassword()) {
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" x2="23" y1="1" y2="23" /></svg>
+                } @else {
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                }
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="sigc-btn sigc-btn--primary sigc-btn--block" [disabled]="loading()">
+            @if (loading()) {
+              <span class="sigc-spinner" aria-hidden="true"></span>
+              Ingresando…
+            } @else {
+              Ingresar
+            }
+          </button>
+
+          <p class="auth-footer">
+            ¿No tiene cuenta?
+            <a routerLink="/register">Registrarse</a>
+          </p>
+        </form>
+
+        <div class="auth-demo sigc-card" style="margin-top: 1rem; box-shadow: none; background: var(--muted)">
+          <div class="sigc-card__bd" style="padding: 0.75rem; font-size: 0.75rem">
+            <p style="margin: 0 0 0.25rem; font-weight: 600">Credenciales de prueba (datos demo en BD)</p>
+            <p style="margin: 0; color: var(--muted-foreground)">Documento y clave según usuarios creados en MySQL.</p>
+            <p style="margin: 0.5rem 0 0; color: var(--muted-foreground)">Registro público crea rol consultor (ciudadano).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

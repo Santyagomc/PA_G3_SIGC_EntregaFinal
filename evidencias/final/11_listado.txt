@@ -1,0 +1,7 @@
+# Query solicitudes (ADMIN) con filtro y paginación; el cliente pide solo los campos que necesita
+# 2026-11-19 21:23:11
+
+> query { solicitudes(filtro: { estado: CERRADO }, page: 0, size: 3) { totalElementos totalPaginas contenido { id titulo estado } } }
+{"data":{"solicitudes":{"totalElementos":3,"totalPaginas":1,"contenido":[{"id":"4","titulo":"Demora en respuesta de peticion","estado":"CERRADO"},{"id":"3","titulo":"Demora en respuesta de peticion","estado":"CERRADO"},{"id":"1","titulo":"Demora en respuesta a mi petición","estado":"CERRADO"}]}}}
+[HTTP 200 � 0.052917s]
+

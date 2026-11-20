@@ -1,0 +1,18 @@
+# POST /events/simulate/duplicate/0ef85173-e43d-4db1-bc61-51e1dde1abba
+# 2026-10-15 00:11:32
+$ call POST /events/simulate/duplicate/0ef85173-e43d-4db1-bc61-51e1dde1abba
+
+HTTP 202  POST /events/simulate/duplicate/0ef85173-e43d-4db1-bc61-51e1dde1abba
+{
+    "data": {
+        "scenario": "DUPLICATE",
+        "topic": "audit-events",
+        "partition": 0,
+        "offset": 2,
+        "key": "1",
+        "payload": "{\"eventId\":\"0ef85173-e43d-4db1-bc61-51e1dde1abba\",\"eventType\":\"REQUEST_STATUS_CHANGED\",\"eventVersion\":1,\"source\":\"sigcapi.requests\",\"timestamp\":\"2026-10-15T05:10:01.347339476Z\",\"requestId\":1,\"tipoSolicitud\":\"QUEJA\",\"estadoAnterior\":\"CREADO\",\"estadoNuevo\":\"CERRADO\",\"actor\":\"1000000001\",\"actorId\":1,\"observaciones\":\"Respuesta de fondo enviada al ciudadano\"}",
+        "expectedOutcome": "Ambos consumidores registran 'Evento duplicado ignorado'; request_history y notifications no cambian."
+    },
+    "exito": true,
+    "mensaje": "Duplicado publicado."
+}

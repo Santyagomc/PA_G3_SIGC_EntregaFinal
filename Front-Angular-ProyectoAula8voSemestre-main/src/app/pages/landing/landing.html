@@ -1,0 +1,115 @@
+<div class="landing">
+  <header class="landing-nav">
+    <a routerLink="/inicio" class="landing-nav__brand">
+      <span class="landing-nav__logo" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+      </span>
+      <span class="landing-nav__title">SIGC PQRS</span>
+    </a>
+    <nav class="landing-nav__links" aria-label="Principal">
+      <a routerLink="/inicio" fragment="que-es" class="landing-nav__link">Qué es</a>
+      <a routerLink="/inicio" fragment="tramites" class="landing-nav__link">Trámites</a>
+      <a routerLink="/inicio" fragment="documentos" class="landing-nav__link">Documentos</a>
+      <a routerLink="/asistente" class="landing-nav__link landing-nav__link--accent">Asistente</a>
+      <a routerLink="/login" class="landing-nav__link">Ingresar</a>
+      <a routerLink="/register" class="sigc-btn sigc-btn--primary sigc-btn--sm landing-nav__cta">Registrarse</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero__inner">
+        <p class="hero__badge">Gobernación del Huila</p>
+        <h1 class="hero__title">Sistema integral de gestión de PQRS</h1>
+        <p class="hero__lead">
+          Peticiones, quejas, reclamos y sugerencias en un solo lugar. Consulte requisitos, orientación sobre documentos y
+          radique cuando esté listo — sin obligación de entrar primero al login.
+        </p>
+        <div class="hero__actions">
+          <a routerLink="/asistente" class="sigc-btn sigc-btn--primary hero__btn">Abrir asistente virtual</a>
+          <a routerLink="/login" class="sigc-btn sigc-btn--outline hero__btn">Ya tengo cuenta</a>
+        </div>
+        <p class="hero__note">El asistente es público: puede escribir, adjuntar un archivo de referencia y preguntar lo que necesite.</p>
+      </div>
+    </section>
+
+    <section id="que-es" class="section">
+      <h2 class="section__title">Qué es SIGC PQRS</h2>
+      <p class="section__text">
+        Es el canal digital para que ciudadanos y entidades interactúen con la Gobernación del Huila de forma ordenada.
+        Puede conocer el tipo de trámite que le corresponde, qué documentos suelen pedirse y los tiempos orientativos de
+        respuesta antes de registrarse.
+      </p>
+      <div class="cards">
+        <article class="sigc-card card">
+          <div class="sigc-card__bd">
+            <h3 class="card__h">Transparencia</h3>
+            <p class="card__p">Seguimiento claro de solicitudes para usuarios autenticados.</p>
+          </div>
+        </article>
+        <article class="sigc-card card">
+          <div class="sigc-card__bd">
+            <h3 class="card__h">Orientación</h3>
+            <p class="card__p">Asistente 24/7 para dudas sobre PQRS y documentación.</p>
+          </div>
+        </article>
+        <article class="sigc-card card">
+          <div class="sigc-card__bd">
+            <h3 class="card__h">Radicación</h3>
+            <p class="card__p">Registro e ingreso de solicitudes formales con cuenta.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="tramites" class="section section--muted">
+      <h2 class="section__title">Tipos de trámite</h2>
+      <ul class="steps">
+        <li><strong>Petición</strong> — Solicitud de información, copias o certificaciones.</li>
+        <li><strong>Queja</strong> — Manifestación de inconformidad con el servicio o la atención.</li>
+        <li><strong>Reclamo</strong> — Exigencia de solución ante un daño o incumplimiento.</li>
+      </ul>
+      <p class="section__text">
+        No está seguro cuál aplica? Use el <a routerLink="/asistente">asistente</a>: descríbale su caso o adjunte un
+        documento y le orientamos con preguntas guía.
+      </p>
+    </section>
+
+    <section id="documentos" class="section">
+      <h2 class="section__title">Documentos y archivos</h2>
+      <p class="section__text">
+        De forma general se solicitan identificación, formularios o evidencias según el caso (PDF, imágenes, etc.). En el
+        asistente puede <strong>subir un archivo</strong> para decir «quiero saber si esto sirve como soporte» o
+        <strong>escribir libremente</strong> qué documento tiene o necesita.
+      </p>
+      <p class="section__text">
+        La vinculación oficial de archivos a una solicitud radicada se hace tras <a routerLink="/login">iniciar sesión</a>
+        en el módulo de documentos.
+      </p>
+    </section>
+
+    <section class="section cta-band">
+      <div class="cta-band__inner">
+        <div>
+          <h2 class="cta-band__title">¿Listo para preguntar o compartir un archivo?</h2>
+          <p class="cta-band__sub">Entre al asistente sin cuenta. Si luego desea radicar, puede registrarse.</p>
+        </div>
+        <a routerLink="/asistente" class="sigc-btn sigc-btn--primary">Ir al asistente</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="landing-footer">
+    <p>SIGC PQRS — Proyecto académico / demostración. Gobernación del Huila (referencia institucional).</p>
+  </footer>
+
+  <a routerLink="/asistente" class="fab-chat" aria-label="Abrir asistente virtual">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+    </svg>
+    <span class="fab-chat__label">Asistente</span>
+  </a>
+</div>

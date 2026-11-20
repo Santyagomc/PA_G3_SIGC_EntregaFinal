@@ -1,0 +1,7 @@
+# Mutation cambiarEstadoSolicitud (ADMIN) → PUT /requests/4/status → evento REQUEST_STATUS_CHANGED
+# 2026-11-19 21:23:06
+
+> mutation { cambiarEstadoSolicitud(id: "4", estado: CERRADO, observaciones: "Respuesta de fondo enviada") { id estado } }
+{"data":{"cambiarEstadoSolicitud":{"id":"4","estado":"CERRADO"}}}
+[HTTP 200 � 0.085323s]
+

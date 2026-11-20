@@ -1,0 +1,38 @@
+# GET /events/notifications?requestId=1
+# 2026-10-15 00:10:52
+$ call GET /events/notifications?requestId=1
+
+HTTP 200  GET /events/notifications?requestId=1
+{
+    "data": {
+        "content": [
+            {
+                "body": "Hola Ciudadano Demo Kafka,\n\nSe ha actualizado el estado de tu solicitud en SIGCAPI.\n\n------------------------------------------\nNúmero de Radicado: 1\nTítulo: Demora en respuesta a mi petición\nTipo: QUEJA\nEstado Anterior: CREADO\nEstado Actual: CERRADO\nObservaciones: Respuesta de fondo enviada al ciudadano\n------------------------------------------\n\nEste es un correo automático, por favor no lo respondas.",
+                "channel": "EMAIL",
+                "createdAt": "2026-10-15T00:10:06",
+                "eventId": "0ef85173-e43d-4db1-bc61-51e1dde1abba",
+                "id": 2,
+                "recipient": "ciudadano.demo@example.com",
+                "requestId": 1,
+                "status": "SIMULATED",
+                "subject": "Actualización de Estado - PQR No. 1 - SIGCAPI"
+            },
+            {
+                "body": "Hola Ciudadano Demo Kafka,\n\nTu solicitud fue radicada correctamente en SIGCAPI.\n\n------------------------------------------\nNúmero de Radicado: 1\nTítulo: Demora en respuesta a mi petición\nTipo: QUEJA\nEstado Actual: CREADO\nFecha límite de respuesta: 2030-12-31\n------------------------------------------\n\nEste es un correo automático, por favor no lo respondas.",
+                "channel": "EMAIL",
+                "createdAt": "2026-10-15T00:10:05",
+                "eventId": "254181ca-38d8-4925-b9b5-86d893a2840e",
+                "id": 1,
+                "recipient": "ciudadano.demo@example.com",
+                "requestId": 1,
+                "status": "SIMULATED",
+                "subject": "Radicación recibida - PQR No. 1 - SIGCAPI"
+            }
+        ],
+        "totalElements": 2,
+        "totalPages": 1,
+        "currentPage": 0
+    },
+    "exito": true,
+    "mensaje": "Notificaciones generadas por eventos."
+}

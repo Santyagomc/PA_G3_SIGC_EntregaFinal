@@ -1,0 +1,43 @@
+# Resiliencia: API REST detenida â†’ timeout/retry/circuit breaker en el gateway
+# 2026-11-19 21:23:27
+
+ Container sigc-api Stopping 
+ Container sigc-api Stopped 
+--- intento 1
+{"errors":[{"message":"El servicio de solicitudes no respondiÃ³ a tiempo. Intente nuevamente.","locations":[{"line":1,"column":9}],"path":["solicitudes"],"extensions":{"codigo":"UNAVAILABLE","correlationId":"resiliencia-1","classification":"INTERNAL_ERROR"}}],"data":null}
+[HTTP 200 · 7.021099s]
+--- intento 2
+{"errors":[{"message":"El servicio de solicitudes no estÃ¡ disponible temporalmente. Intente en unos segundos.","locations":[{"line":1,"column":9}],"path":["solicitudes"],"extensions":{"codigo":"UNAVAILABLE","correlationId":"resiliencia-2","classification":"INTERNAL_ERROR"}}],"data":null}
+[HTTP 200 · 0.952393s]
+--- intento 3
+{"errors":[{"message":"El servicio de solicitudes no estÃ¡ disponible temporalmente. Intente en unos segundos.","locations":[{"line":1,"column":9}],"path":["solicitudes"],"extensions":{"codigo":"UNAVAILABLE","correlationId":"resiliencia-3","classification":"INTERNAL_ERROR"}}],"data":null}
+[HTTP 200 · 0.038970s]
+--- intento 4
+{"errors":[{"message":"El servicio de solicitudes no estÃ¡ disponible temporalmente. Intente en unos segundos.","locations":[{"line":1,"column":9}],"path":["solicitudes"],"extensions":{"codigo":"UNAVAILABLE","correlationId":"resiliencia-4","classification":"INTERNAL_ERROR"}}],"data":null}
+[HTTP 200 · 0.022281s]
+--- intento 5
+{"errors":[{"message":"El servicio de solicitudes no estÃ¡ disponible temporalmente. Intente en unos segundos.","locations":[{"line":1,"column":9}],"path":["solicitudes"],"extensions":{"codigo":"UNAVAILABLE","correlationId":"resiliencia-5","classification":"INTERNAL_ERROR"}}],"data":null}
+[HTTP 200 · 0.038775s]
+--- intento 6
+{"errors":[{"message":"El servicio de solicitudes no estÃ¡ disponible temporalmente. Intente en unos segundos.","locations":[{"line":1,"column":9}],"path":["solicitudes"],"extensions":{"codigo":"UNAVAILABLE","correlationId":"resiliencia-6","classification":"INTERNAL_ERROR"}}],"data":null}
+[HTTP 200 · 0.031584s]
+--- Indicadores con la API caÃ­da (se expira la cachÃ© de 30 s para forzar el respaldo): Ãºltimo valor conocido desde Redis
+> query { resumenIndicadores { totalSolicitudes generadoEn desactualizado } }
+{"data":{"resumenIndicadores":{"totalSolicitudes":4,"generadoEn":"2026-11-19T21:23:23.947123958-05:00","desactualizado":true}}}
+[HTTP 200 · 0.446941s]
+
+--- Estado del gateway
+{"components":{"apiRest":{"details":{"circuitBreaker":"OPEN","tasaFallos":50.0,"llamadasFallidas":5,"llamadasRechazadas":6},"status":"OUT_OF_SERVICE"},"diskSpace":{"details":{"total":1081101176832,"free":972954767360,"threshold":10485760,"path":"/app/.","exists":true},"status":"UP"},"livenessState":{"status":"UP"},"ping":{"status":"UP"},"readinessState":{"status":"UP"},"redis":{"details":{"version":"7.4.12"},"status":"UP"},"ssl":{"details":{"expiringChains":[],"invalidChains":[],"validChains":[]},"status":"UP"}},"groups":["liveness","readiness"],"status":"OUT_OF_SERVICE"}
+--- Logs [RESILIENCIA] del gateway
+sigc-gateway  | 2026-11-19T21:23:32.183-05:00  WARN [correlationId=resiliencia-1] 1 --- [sigc-gateway] [io-8081-exec-10] c.sigc.gateway.config.ResilienceConfig   : [RESILIENCIA] reintento 1 de la consulta a la API: ApiUn
+sigc-gateway  | 2026-11-19T21:23:36.501-05:00  WARN [correlationId=resiliencia-1] 1 --- [sigc-gateway] [io-8081-exec-10] c.sigc.gateway.config.ResilienceConfig   : [RESILIENCIA] reintento 2 de la consulta a la API: ApiUn
+sigc-gateway  | 2026-11-19T21:23:37.400-05:00  WARN [correlationId=resiliencia-2] 1 --- [sigc-gateway] [nio-8081-exec-3] c.sigc.gateway.config.ResilienceConfig   : [RESILIENCIA] reintento 1 de la consulta a la API: ApiUn
+sigc-gateway  | 2026-11-19T21:23:37.708-05:00  WARN [correlationId=resiliencia-2] 1 --- [sigc-gateway] [nio-8081-exec-3] c.sigc.gateway.config.ResilienceConfig   : [RESILIENCIA] circuit breaker api-rest: State transition
+sigc-gateway  | 2026-11-19T21:23:37.709-05:00  WARN [correlationId=resiliencia-2] 1 --- [sigc-gateway] [nio-8081-exec-3] c.sigc.gateway.config.ResilienceConfig   : [RESILIENCIA] reintento 2 de la consulta a la API: ApiUn
+sigc-gateway  | 2026-11-19T21:23:38.311-05:00  WARN [correlationId=resiliencia-2] 1 --- [sigc-gateway] [nio-8081-exec-3] com.sigc.gateway.client.ApiClient        : [RESILIENCIA] circuit breaker ABIERTO: se evita llamar G
+sigc-gateway  | 2026-11-19T21:23:38.544-05:00  WARN [correlationId=resiliencia-3] 1 --- [sigc-gateway] [nio-8081-exec-4] com.sigc.gateway.client.ApiClient        : [RESILIENCIA] circuit breaker ABIERTO: se evita llamar G
+sigc-gateway  | 2026-11-19T21:23:38.762-05:00  WARN [correlationId=resiliencia-4] 1 --- [sigc-gateway] [nio-8081-exec-7] com.sigc.gateway.client.ApiClient        : [RESILIENCIA] circuit breaker ABIERTO: se evita llamar G
+sigc-gateway  | 2026-11-19T21:23:38.982-05:00  WARN [correlationId=resiliencia-5] 1 --- [sigc-gateway] [nio-8081-exec-9] com.sigc.gateway.client.ApiClient        : [RESILIENCIA] circuit breaker ABIERTO: se evita llamar G
+sigc-gateway  | 2026-11-19T21:23:39.197-05:00  WARN [correlationId=resiliencia-6] 1 --- [sigc-gateway] [io-8081-exec-10] com.sigc.gateway.client.ApiClient        : [RESILIENCIA] circuit breaker ABIERTO: se evita llamar G
+sigc-gateway  | 2026-11-19T21:23:39.844-05:00  WARN [correlationId=resiliencia-cache] 1 --- [sigc-gateway] [nio-8081-exec-3] com.sigc.gateway.client.ApiClient        : [RESILIENCIA] circuit breaker ABIERTO: se evita llam
+sigc-gateway  | 2026-11-19T21:23:40.248-05:00  WARN [correlationId=resiliencia-cache] 1 --- [sigc-gateway] [nio-8081-exec-3] c.s.gateway.graphql.IndicadoresService   : [RESILIENCIA] API no disponible: se responde el Ãºlt

@@ -1,0 +1,11 @@
+# Seguridad: CONSULTOR consulta indicadores (ADMIN) â†’ FORBIDDEN; consulta su identidad â†’ OK
+# 2026-11-19 21:23:04
+
+> query { resumenIndicadores { totalSolicitudes } }
+{"errors":[{"message":"No tiene permisos para realizar esta operaciÃ³n.","locations":[{"line":1,"column":9}],"path":["resumenIndicadores"],"extensions":{"codigo":"FORBIDDEN","correlationId":"demo-final-212255","classification":"FORBIDDEN"}}],"data":null}
+[HTTP 200 · 0.044445s]
+
+> query { me { documento roles } }
+{"data":{"me":{"documento":"921230401","roles":["CONSULTOR"]}}}
+[HTTP 200 · 0.025380s]
+

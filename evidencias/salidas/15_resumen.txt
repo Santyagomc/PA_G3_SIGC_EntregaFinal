@@ -1,0 +1,23 @@
+# GET /events/summary
+# 2026-10-15 00:12:24
+$ call GET /events/summary
+
+HTTP 200  GET /events/summary
+{
+    "data": {
+        "outbox": {
+            "PENDING": 0,
+            "PUBLISHED": 2,
+            "FAILED": 0
+        },
+        "eventosProcesadosPorConsumidor": {
+            "audit-history": 2,
+            "citizen-notifications": 2
+        },
+        "registrosHistorial": 2,
+        "notificaciones": 2,
+        "mensajesEnDLT": 6
+    },
+    "exito": true,
+    "mensaje": "Resumen del flujo de eventos."
+}

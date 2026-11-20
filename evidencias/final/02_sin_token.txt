@@ -1,0 +1,7 @@
+# Seguridad: operación protegida SIN token → UNAUTHORIZED
+# 2026-11-19 21:23:01
+
+> query { resumenIndicadores { totalSolicitudes } }
+{"errors":[{"message":"Debe autenticarse (Authorization: Bearer <token>).","locations":[{"line":1,"column":9}],"path":["resumenIndicadores"],"extensions":{"codigo":"UNAUTHORIZED","correlationId":"demo-final-212255","classification":"UNAUTHORIZED"}}],"data":null}
+[HTTP 200 � 0.113523s]
+

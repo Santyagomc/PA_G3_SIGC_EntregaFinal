@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>G3 SIGC Informe final</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm 16mm 15mm; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #000; line-height: 1.38; margin: 0; }
+  .hdr { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  .hdr td { border: 1px solid #000; padding: 4px 6px; text-align: center; vertical-align: middle; }
+  .hdr .logo { width: 24%; }
+  .hdr .logo .fet { font-family: "Times New Roman", serif; font-weight: bold; font-size: 22pt; color: #fff; background: #1e6b2e; display: inline-block; padding: 0 8px; letter-spacing: 2px; }
+  .hdr .logo .inst { font-size: 6.5pt; color: #1e6b2e; font-weight: bold; margin-top: 2px; line-height: 1.15; }
+  .hdr .mid { width: 52%; font-weight: bold; font-size: 10pt; }
+  .hdr .code { width: 24%; font-size: 9pt; }
+  .meta { margin: 6px 0 8px 18px; font-size: 10pt; }
+  .meta b { display: inline-block; min-width: 110px; }
+  table.std { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 9.5pt; }
+  table.std th { background: #c4d79b; border: 1px solid #000; padding: 3px 5px; text-align: left; }
+  table.std td { border: 1px solid #000; padding: 3px 5px; vertical-align: top; }
+  .sec { border: 1px solid #000; margin-top: 10px; }
+  .sec > h2 { background: #c4d79b; margin: 0; padding: 2px 6px; font-size: 10.5pt; border-bottom: 1px solid #000; }
+  .sec > .body { padding: 6px 9px; text-align: justify; }
+  h3 { font-size: 10.5pt; margin: 9px 0 3px; }
+  h4 { font-size: 10pt; margin: 7px 0 2px; }
+  p { margin: 4px 0; }
+  ul, ol { margin: 3px 0 4px 18px; padding: 0; }
+  li { margin: 1px 0; }
+  .kw { font-style: italic; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 9pt; background: #f2f2f2; padding: 0 2px; }
+  pre { font-family: Consolas, "Courier New", monospace; font-size: 8.3pt; background: #f6f6f6; border: 1px solid #ccc; padding: 5px; white-space: pre-wrap; word-break: break-word; }
+  .ok { color: #1b5e20; font-weight: bold; }
+  .par { color: #8a5a00; font-weight: bold; }
+  .pen { color: #b71c1c; font-weight: bold; }
+  .note { font-size: 9pt; color: #333; border-left: 3px solid #8bb34a; padding: 2px 6px; background: #f6faef; margin: 5px 0; }
+  .ref p { padding-left: 24px; text-indent: -24px; }
+  .pb { page-break-before: always; }
+  .avoid { page-break-inside: avoid; }
+  .caption { font-size: 9pt; font-style: italic; text-align: center; margin: 2px 0 8px; }
+  .diagram { font-family: Consolas, monospace; font-size: 8.2pt; white-space: pre; background: #fbfbfb; border: 1px solid #bbb; padding: 6px; line-height: 1.25; }
+  .tot td { background: #e3eccf; font-weight: bold; }
+  .right { text-align: right; }
+</style>
+</head>
+<body>
+
+<table class="hdr">
+  <tr>
+    <td class="logo" rowspan="2"><span class="fet">FET</span><div class="inst">FUNDACIÓN ESCUELA<br>TECNOLÓGICA DE NEIVA<br>JESÚS OVIEDO PÉREZ</div></td>
+    <td class="mid">GESTIÓN DE INVESTIGACIÓN</td>
+    <td class="code"><b>CÓDIGO:</b><br>FO-GI-10</td>
+  </tr>
+  <tr>
+    <td class="mid">INFORME FINAL PROYECTO DE AULA</td>
+    <td class="code"><b>VIGENCIA:</b><br>ENERO 31 DE 2024</td>
+  </tr>
+</table>
+
+<div class="meta">
+  <div><b>Fecha:</b> 19 de noviembre de 2026</div>
+  <div><b>Asignatura:</b> Programación Avanzada — Grupo 3 (Equipo 4)</div>
+  <div><b>Programa:</b> Ingeniería de Software</div>
+  <div><b>Docente Tutor:</b> Diego Fernando Vargas Ramírez</div>
+</div>
+
+<table class="std">
+  <tr><th style="width:6%">No</th><th>Nombre Estudiantes</th><th style="width:24%">Programa</th><th style="width:11%">Semestre</th><th style="width:11%">Jornada</th></tr>
+  <tr><td>1</td><td>Santiago Murcia Cangrejo</td><td>Ingeniería de Software</td><td>9</td><td>Día</td></tr>
+  <tr><td>2</td><td>Hallys Andrea Escobar Paloma</td><td>Ingeniería de Software</td><td>9</td><td>Día</td></tr>
+  <tr><td>3</td><td></td><td></td><td></td><td></td></tr>
+  <tr><td>4</td><td></td><td></td><td></td><td></td></tr>
+</table>
+
+<div class="sec avoid"><h2>1. Título del proyecto</h2><div class="body">
+<p><b>SIGC: Sistema Inteligente de Gestión de PQR con arquitectura distribuida orientada a eventos (API REST, Kafka y Gateway GraphQL).</b></p>
+</div></div>
+
+<div class="sec"><h2>2. Resumen y abstract</h2><div class="body">
+<h4>Resumen</h4>
+<p>SIGC es un sistema para radicar, tramitar y auditar peticiones, quejas y reclamos (PQR) de acuerdo con la normativa colombiana. El proyecto evolucionó por entregas sucesivas: una API REST en Spring Boot 4 / Java 21 con persistencia en MariaDB y autenticación JWT; una integración orientada a eventos con Apache Kafka (patrón <i>Transactional Outbox</i>, consumidores idempotentes de auditoría y notificación, y un <i>Dead Letter Topic</i>); y, en el tercer periodo, un microservicio <i>gateway</i> GraphQL que es el punto de entrada para el cliente, valida el token y los roles, compone información de varios endpoints REST, aplica timeout, reintentos y <i>circuit breaker</i>, y almacena en Redis los indicadores del tablero. Todos los componentes (base de datos, Kafka, Kafka UI, Redis, API, gateway y frontend Angular) se levantan con Docker Compose. La solución incluye contratos (OpenAPI, AsyncAPI, JSON Schema y schema GraphQL), pruebas unitarias, de integración y de contrato, y un identificador de correlación que permite seguir una operación desde el gateway hasta los consumidores de Kafka. El informe distingue lo implementado, lo parcial y lo pendiente.</p>
+<p><b>Palabras claves:</b> <span class="kw">gestión de PQR, arquitectura orientada a eventos, Apache Kafka, GraphQL, seguridad de APIs, resiliencia.</span></p>
+<h4>Abstract</h4>
+<p>SIGC is a system for filing, processing and auditing citizen petitions, complaints and claims (PQR) in accordance with Colombian regulations. The project evolved through incremental deliveries: a REST API built with Spring Boot 4 / Java 21, MariaDB persistence and JWT authentication; an event-driven integration with Apache Kafka (Transactional Outbox pattern, idempotent audit and notification consumers, and a Dead Letter Topic); and, in the third period, a GraphQL gateway microservice that acts as the client entry point, validates the token and roles, composes data from several REST endpoints, applies timeout, retry and circuit breaker policies, and caches dashboard indicators in Redis. All components (database, Kafka, Kafka UI, Redis, API, gateway and Angular frontend) run with Docker Compose. The solution includes contracts (OpenAPI, AsyncAPI, JSON Schema and GraphQL schema), unit, integration and contract tests, and a correlation identifier that traces an operation from the gateway to the Kafka consumers. The report distinguishes implemented, partial and pending features.</p>
+<p><b>Keywords:</b> <span class="kw">complaint management, event-driven architecture, Apache Kafka, GraphQL, API security, resilience.</span></p>
+</div></div>
+
+<div class="sec"><h2>3. Introducción</h2><div class="body">
+<p>Este informe presenta el resultado final del proyecto de aula de Programación Avanzada. El alcance aprobado es un <b>MVP backend distribuido</b> para la gestión de PQR: el ciudadano se registra, inicia sesión y radica una solicitud con sus soportes; el administrador consulta, filtra y cambia el estado de las solicitudes; cada cambio queda auditado y genera una notificación al ciudadano sin bloquear la respuesta HTTP; y el tablero administrativo consulta indicadores a través de un gateway GraphQL.</p>
+<p>Los objetivos se abordaron con una metodología iterativa e incremental, en tres entregas alineadas con los periodos del curso: (1) contratos y API REST; (2) mensajería con Kafka; (3) gateway GraphQL, seguridad, pruebas, observabilidad, resiliencia y Docker Compose final. La aplicación práctica es doble: el sistema sirve como base para una oficina de atención al ciudadano y, en lo académico, permite demostrar de extremo a extremo los conceptos de arquitecturas distribuidas trabajados en el semestre.</p>
+</div></div>
+
+<div class="sec"><h2>4. Problemática</h2><div class="body">
+<p>Las entidades que reciben PQR deben responder dentro de plazos legales (Ley 1755 de 2015) y proteger los datos personales de los ciudadanos (Ley 1581 de 2012). En muchas organizaciones pequeñas el trámite se lleva en correos y hojas de cálculo: no hay trazabilidad de quién cambió el estado de una solicitud ni cuándo, los vencimientos se detectan tarde y la notificación al ciudadano depende de que alguien la envíe manualmente.</p>
+<p>La primera versión del backend de SIGC resolvía el registro y la consulta, pero tenía limitaciones técnicas: el historial y el correo se ejecutaban <b>dentro de la petición HTTP</b> (si el servidor de correo fallaba, fallaba el cambio de estado), el cliente debía hacer varias llamadas REST para armar el tablero, no existía un punto de entrada único con control de acceso por rol, y no había forma de seguir una operación a través de varios componentes ni de tolerar la caída parcial de un servicio. Estos problemas son los que el proyecto estudia y resuelve con una arquitectura distribuida.</p>
+</div></div>
+
+<div class="sec"><h2>5. Justificación del Proyecto</h2><div class="body">
+<p><b>Para los estudiantes</b>, el proyecto integra en un solo sistema funcional los temas de la asignatura (REST, Kafka, GraphQL, seguridad, pruebas, observabilidad, resiliencia y contenedores), con decisiones justificadas y no solo como ejercicios aislados. <b>Para el docente tutor</b>, ofrece un artefacto ejecutable y verificable (README, Docker Compose, pruebas automatizadas y evidencias) sobre el cual evaluar competencias técnicas. <b>Para la sociedad</b>, un sistema de PQR con trazabilidad completa, notificación oportuna y protección de datos personales contribuye a que el derecho de petición se ejerza de forma efectiva y a que las entidades cumplan los plazos y obligaciones legales.</p>
+</div></div>
+
+<div class="sec"><h2>6. Objetivos</h2><div class="body">
+<h4>6.1. Objetivo general</h4>
+<p>Desarrollar un MVP de sistema de gestión de PQR con arquitectura distribuida —API REST, mensajería con Apache Kafka y gateway GraphQL— que garantice la trazabilidad de cada solicitud, la notificación asíncrona al ciudadano y el acceso seguro y resiliente desde el cliente, ejecutable de forma reproducible con Docker Compose.</p>
+<h4>6.2. Objetivos específicos</h4>
+<ul>
+  <li>Implementar la API REST de dominio (autenticación JWT, radicación con documentos, consulta, cambio de estado, validaciones y manejo de errores) con persistencia en MariaDB.</li>
+  <li>Integrar Apache Kafka para auditar y notificar cada cambio de una PQR de forma asíncrona, idempotente y con tratamiento de errores (reintentos y Dead Letter Topic).</li>
+  <li>Exponer un gateway GraphQL con seguridad (JWT, roles, CORS), resiliencia (timeout, retry, circuit breaker), caché en Redis y trazabilidad por identificador de correlación, verificado mediante pruebas y evidencias.</li>
+</ul>
+</div></div>
+
+<div class="sec"><h2>7. Referente teórico</h2><div class="body">
+<h3>Antecedentes</h3>
+<p>Las arquitecturas de microservicios y orientadas a eventos se han consolidado como alternativa a los monolitos cuando se necesita desacoplar responsabilidades y tolerar fallos parciales (Newman, 2021; Richardson, 2018). Kreps et al. (2011) presentaron Kafka como un registro distribuido de mensajes de alto rendimiento, hoy estándar para integrar sistemas por eventos. GraphQL fue publicado por Facebook en 2015 como lenguaje de consulta orientado al cliente y su especificación es mantenida por la GraphQL Foundation (GraphQL Foundation, 2021). En el contexto colombiano, la gestión de PQR está regulada por el CPACA y la Ley 1755 de 2015, y muchas entidades usan sistemas de ventanilla única; este proyecto toma esas necesidades como referencia funcional.</p>
+<h3>Marco teórico</h3>
+<ul>
+  <li><b>API REST:</b> recursos identificados por URI y operaciones HTTP con códigos de estado estándar; el contrato se describe con OpenAPI 3.</li>
+  <li><b>Arquitectura orientada a eventos y Kafka:</b> un productor publica un hecho relevante en un tópico particionado; los grupos de consumidores lo procesan de forma independiente (fan-out). Kafka garantiza orden por partición, por lo que la clave <code>requestId</code> conserva el orden de los eventos de una misma PQR. La entrega es <i>al menos una vez</i>, por lo que los consumidores deben ser <b>idempotentes</b>.</li>
+  <li><b>Transactional Outbox:</b> el evento se guarda en la misma transacción que el cambio de negocio y un <i>relay</i> lo publica después, evitando perder eventos si el broker no está disponible (Richardson, 2018).</li>
+  <li><b>GraphQL y patrón Gateway:</b> un schema tipado es el contrato con el cliente; las <i>queries</i> consultan y las <i>mutations</i> cambian estado; los <i>resolvers</i> delegan en servicios internos. El gateway es el punto de entrada, compone y adapta la información y oculta la arquitectura interna, sin duplicar la lógica de negocio que permanece en REST.</li>
+  <li><b>Seguridad:</b> autenticación (quién eres) frente a autorización (qué puedes hacer); JWT (RFC 7519) como token firmado con <i>claims</i> que el servidor valida (firma y vigencia); CORS como control de orígenes del navegador, que no reemplaza la autenticación; secretos en variables de entorno.</li>
+  <li><b>Pruebas y observabilidad:</b> pruebas unitarias, de integración y de contrato; logs estructurados, métricas y trazas; identificador de correlación para relacionar los logs de un mismo flujo.</li>
+  <li><b>Resiliencia:</b> <i>timeout</i> (limitar la espera), <i>retry</i> (solo para operaciones recuperables e idempotentes, con límites) y <i>circuit breaker</i> (fallar rápido ante un servicio que está fallando y recuperarse gradualmente) (Nygard, 2018).</li>
+  <li><b>Redis:</b> almacén en memoria útil como caché de datos de lectura frecuente con tiempo de expiración.</li>
+</ul>
+<h3>Marco legal</h3>
+<ul>
+  <li><b>Ley 1755 de 2015:</b> regula el derecho fundamental de petición y sus términos de respuesta (15 días hábiles por regla general).</li>
+  <li><b>Ley 1437 de 2011 (CPACA):</b> procedimiento administrativo; base de las reglas del motor experto de radicación.</li>
+  <li><b>Ley 1581 de 2012 y Decreto 1377 de 2013:</b> protección de datos personales; por ello los eventos de Kafka no contienen datos personales del ciudadano, los logs no registran contraseñas ni tokens y la radicación exige aceptar la política de tratamiento de datos.</li>
+</ul>
+<h3>Marco contextual</h3>
+<p>El proyecto se desarrolló en la Fundación Escuela Tecnológica de Neiva Jesús Oviedo Pérez, en la asignatura Programación Avanzada (noveno semestre de Ingeniería de Software, jornada día, 2026-2), por un equipo de dos integrantes. <b>Fortalezas:</b> uso exclusivo de herramientas libres, entorno reproducible con Docker y entregas incrementales con retroalimentación. <b>Limitaciones:</b> equipo reducido, tiempo de un semestre, ejecución en equipos personales (un solo broker Kafka, sin despliegue en la nube) y ausencia de una entidad real que valide el sistema en producción; los datos usados son ficticios.</p>
+</div></div>
+
+<div class="sec"><h2>8. Metodología y materiales</h2><div class="body">
+<p>Se aplicó una metodología <b>iterativa e incremental</b> con cadencia semanal de tipo Scrum: cada semana se tomaba el tema de clase, se planeaban las tareas, se implementaban y se verificaban con pruebas y evidencias, y se revisaban los resultados con la retroalimentación del docente.</p>
+<table class="std">
+  <tr><th style="width:22%">Iteración</th><th>Actividades y productos</th></tr>
+  <tr><td>Periodo 1 — Contratos y API REST</td><td>Requisitos, modelo de datos, contratos OpenAPI y schema GraphQL inicial; API REST en Spring Boot con MariaDB, JWT, validaciones, paginación, filtros, carga de documentos y manejo centralizado de errores.</td></tr>
+  <tr><td>Periodo 2 — Kafka (semana 11)</td><td>Tópicos <code>audit-events</code> y <code>audit-events.DLT</code>; productor con Transactional Outbox; consumidores <code>sigc-audit</code>, <code>sigc-notifications</code> y <code>sigc-dlt</code>; idempotencia; reintentos con backoff; contrato AsyncAPI y JSON Schema; prueba de integración con Kafka embebido.</td></tr>
+  <tr><td>Periodo 3 — Semanas 12 a 15</td><td>Semana 12: gateway GraphQL (schema, queries, mutations, resolvers, integración REST). Semana 13: seguridad (JWT con roles, autorización por operación, CORS explícito, secretos en <code>.env</code>). Semana 14: pruebas unitarias, de integración y de contrato; logs con identificador de correlación. Semana 15: timeout, retry, circuit breaker, Redis y Docker Compose final.</td></tr>
+  <tr><td>Semana 16</td><td>Estabilización del MVP, documentación (README, manual técnico, contratos), evidencias y este informe.</td></tr>
+</table>
+<p><b>Técnicas de verificación:</b> pruebas automatizadas (JUnit 5, Mockito, Spring Test, Kafka embebido), pruebas manuales con curl/Postman y GraphiQL, revisión de logs y de Kafka UI, y consultas directas a la base de datos.</p>
+<h4>Recursos materiales</h4>
+<ul>
+  <li>Dos computadores personales (Windows 11) de los integrantes.</li>
+  <li>Software libre: Java 21 (Eclipse Temurin), Spring Boot 4.0.3, Spring for GraphQL, Spring Security, Spring Kafka, Resilience4j 2.2, jjwt 0.11.5, Maven; MariaDB 10.11; Apache Kafka 3.9.1 (KRaft); Kafka UI (kafbat); Redis 7; Angular y Node.js 22; nginx; Docker y Docker Compose; Git y GitHub; Visual Studio Code / IntelliJ IDEA; Postman.</li>
+</ul>
+<h4>Recursos institucionales</h4>
+<p>Orientación del docente tutor, diapositivas y lineamientos de la asignatura, y el formato FO-GI-10 de la institución. No se requirieron avales, convenios ni autorizaciones de entidades externas, y no se usaron datos reales de ciudadanos.</p>
+<h4>Recursos financieros</h4>
+<p>No hubo desembolsos: todo el software es libre y la ejecución es local. El valor del trabajo y de los equipos se presenta como <b>estimación</b> en la sección 12.</p>
+<h4>Arquitectura implementada</h4>
+<div class="diagram">  Navegador (Angular + nginx :4300)
+        │  HTTPS/HTTP + Bearer JWT + X-Correlation-Id
+        ├──────────────► API REST (Spring Boot :8080) ──► MariaDB (:3307)
+        │                       ▲   │  outbox_events (misma TX)
+        │  GraphQL /graphql     │   ▼
+        └──► Gateway GraphQL ───┘  OutboxRelay ──► Kafka "audit-events" (3 particiones, clave requestId)
+             (:8081) JWT+roles,              │            ├─► sigc-audit ........ request_history
+             CORS, timeout/retry/CB          │            ├─► sigc-notifications  notifications + correo (simulado)
+             caché ──► Redis (:6379)         │            └─ error no recuperable ─► audit-events.DLT ─► sigc-dlt → failed_events
+                                             └─ Kafka UI (:8090) para inspección</div>
+<p class="caption">Figura 1. Componentes y comunicación de la solución (detalle en README.md y docs/).</p>
+</div></div>
+
+<div class="sec pb"><h2>9. Resultados</h2><div class="body">
+<p>Los resultados se presentan según los objetivos específicos. Cada afirmación está respaldada por una prueba automatizada, una salida de comando guardada en <code>evidencias/</code> o una captura (Anexos). Se distinguen resultados <b>medidos</b> (ejecutados en el entorno Docker Compose o en la suite de pruebas), <b>simulados</b> (fallos provocados a propósito o correo en modo simulado) y <b>trabajo futuro</b>.</p>
+
+<h3>9.1 Objetivo 1 — API REST de dominio</h3>
+<p>La API expone autenticación (<code>/auth/login</code>, <code>/auth/register</code>), radicación con documentos (<code>POST /requests/save</code>), consultas paginadas con filtros (<code>/requests/all</code>, <code>/requests/my</code>), cambio de estado (<code>PUT /requests/{id}/status</code>), historial (<code>/requests/{id}/history</code>) y administración de usuarios, reglas, estándares y sesiones. Los errores siguen un formato uniforme <code>{exito, mensaje, data}</code> con códigos 400/401/403/404/409/413/500. El registro público siempre crea usuarios CONSULTOR y el primer administrador se crea con variables de entorno.</p>
+
+<h3>9.2 Objetivo 2 — Integración con Kafka</h3>
+<p>Al radicar o cambiar el estado de una PQR, la API responde sin esperar a Kafka; el evento queda en <code>outbox_events</code> y el relay lo publica con <code>acks=all</code> y productor idempotente. Los consumidores <code>sigc-audit</code> y <code>sigc-notifications</code> producen efectos verificables en <code>request_history</code> y <code>notifications</code>. Un evento reenviado se ignora (idempotencia por <code>processed_events</code> con restricción única) y los mensajes inválidos terminan en <code>audit-events.DLT</code> y en <code>failed_events</code>.</p>
+
+<h3>9.3 Objetivo 3 — Gateway GraphQL, seguridad, resiliencia y observabilidad</h3>
+<ul>
+  <li><b>Schema y operaciones:</b> queries <code>me</code>, <code>misSolicitudes</code>, <code>solicitudes</code>, <code>solicitud</code> (con el campo <code>historial</code> resuelto con una segunda llamada REST), <code>resumenIndicadores</code> y <code>volumenPorEstado</code>; mutations <code>login</code>, <code>radicarSolicitud</code> y <code>cambiarEstadoSolicitud</code>. Contrato en <code>contracts/schema.graphql</code>.</li>
+  <li><b>Seguridad:</b> el gateway valida la firma y la vigencia del JWT, obtiene la identidad y los roles, aplica <code>@PreAuthorize</code> por operación (ADMIN para consultas administrativas y cambio de estado) y propaga a la API solo el encabezado <code>Authorization</code> y el <code>X-Correlation-Id</code>; la API vuelve a validar el token (no se asume que toda llamada interna es legítima). CORS se configura con orígenes explícitos por variable de entorno.</li>
+  <li><b>Resiliencia:</b> timeout de conexión y lectura en el cliente REST; reintentos limitados con backoff solo en consultas (nunca en mutations, que no son idempotentes); circuit breaker que, al abrirse, responde de inmediato con el código <code>UNAVAILABLE</code>; los indicadores usan el último valor almacenado en Redis marcado como <code>desactualizado</code> cuando la API no responde.</li>
+  <li><b>Caché:</b> <code>resumenIndicadores</code> y <code>volumenPorEstado</code> se guardan en Redis con expiración corta, porque son datos de lectura frecuente del tablero. Los datos propios de cada usuario no se almacenan en caché.</li>
+  <li><b>Observabilidad:</b> el gateway genera o recibe <code>X-Correlation-Id</code>, lo registra en cada línea de log, lo envía a la API y esta lo propaga como header del evento en Kafka hasta los consumidores. Endpoints <code>/actuator/health</code> para el monitoreo de los servicios.</li>
+</ul>
+
+<h3>9.4 Matriz de pruebas y evidencias</h3>
+<style>table.mx{border-collapse:collapse;width:100%;font-size:7.6pt;margin:4px 0 8px}table.mx th,table.mx td{border:1px solid #9bb36b;padding:2px 3px;vertical-align:top}table.mx th{background:#d8e4bc}</style>
+<h4>Tabla 1. Pruebas automatizadas (resultado medido)</h4><table class="mx">
+<tr><th>Módulo</th><th>Comando</th><th>Total</th><th>Fallos</th><th>Errores</th><th>Evidencia</th></tr>
+<tr><td>api.documental</td><td>./mvnw test</td><td>136</td><td>0</td><td>0</td><td>evidencias/pruebas/resumen_surefire.txt</td></tr>
+<tr><td>gateway</td><td>./mvnw test</td><td>24</td><td>0</td><td>0</td><td>ídem</td></tr>
+</table>
+<h4>Tabla 2. Matriz de pruebas de extremo a extremo (scripts/demo-final.sh, 19/11/2026)</h4><table class="mx">
+<tr><th>#</th><th>Caso</th><th>Resultado esperado</th><th>Resultado obtenido</th><th>Estado</th><th>Tipo</th><th>Evidencia</th></tr>
+<tr><td>E01</td><td>Levantar la arquitectura con docker compose up --build -d</td><td>8 servicios; db/kafka/redis/api *healthy*; kafka-init termina</td><td>7 servicios en ejecución + kafka-init exited (0)</td><td>✅ Aprobado</td><td>Medido</td><td>evidencias/final/00_servicios.txt</td></tr>
+<tr><td>E02</td><td>Salud de API y gateway</td><td>UP; gateway muestra circuit breaker CLOSED y Redis UP</td><td>UP, circuitBreaker: CLOSED, redis: UP</td><td>✅</td><td>Medido</td><td>01_salud.txt</td></tr>
+<tr><td>E03</td><td>Query protegida sin token</td><td>Error UNAUTHORIZED</td><td>codigo: UNAUTHORIZED</td><td>✅</td><td>Medido</td><td>02_sin_token.txt</td></tr>
+<tr><td>E04</td><td>login admin vía gateway</td><td>Token + roles [ADMIN]</td><td>Token emitido, roles: ["ADMIN"]</td><td>✅</td><td>Medido</td><td>03_login_admin.txt</td></tr>
+<tr><td>E05</td><td>login con clave incorrecta</td><td>UNAUTHORIZED</td><td>Credenciales inválidas. UNAUTHORIZED</td><td>✅</td><td>Medido</td><td>04_login_invalido.txt</td></tr>
+<tr><td>E06</td><td>Registro de ciudadano (REST)</td><td>HTTP 201, rol CONSULTOR</td><td>201 Usuario registrado exitosamente.</td><td>✅</td><td>Medido</td><td>05_consultor.txt</td></tr>
+<tr><td>E07</td><td>CONSULTOR consulta operación ADMIN / su identidad</td><td>FORBIDDEN / me OK</td><td>FORBIDDEN; me.roles = [CONSULTOR]</td><td>✅</td><td>Medido</td><td>06_consultor_denegado.txt</td></tr>
+<tr><td>E08</td><td>Preflight CORS desde origen permitido y no permitido</td><td>200 con Access-Control-Allow-Origin / 403</td><td>200 Allow-Origin: http://localhost:4300 / 403 Invalid CORS request</td><td>✅</td><td>Medido</td><td>07_cors.txt</td></tr>
+<tr><td>E09</td><td>radicarSolicitud (CONSULTOR) con adjunto</td><td>PQR en estado CREADO</td><td>PQR creada, estado: CREADO</td><td>✅</td><td>Medido</td><td>08_radicar.txt</td></tr>
+<tr><td>E10</td><td>cambiarEstadoSolicitud (ADMIN) a CERRADO</td><td>estado: CERRADO</td><td>estado: CERRADO</td><td>✅</td><td>Medido</td><td>09_cambiar_estado.txt</td></tr>
+<tr><td>E11</td><td>solicitud(id) { historial } (composición de 2 llamadas REST)</td><td>Historial con CREADO y CREADO→CERRADO escrito por sigc-audit; correoEnviado: true</td><td>2 eventos en el historial con eventId; correoEnviado: true; sin datos sensibles (sin password)</td><td>✅</td><td>Medido</td><td>10_consulta_compuesta.txt</td></tr>
+<tr><td>E12</td><td>solicitudes con filtro y paginación</td><td>Solo campos pedidos</td><td>totalElementos, contenido{id titulo estado}</td><td>✅</td><td>Medido</td><td>11_listado.txt</td></tr>
+<tr><td>E13</td><td>misSolicitudes (CONSULTOR)</td><td>Solo sus PQR</td><td>1 PQR propia</td><td>✅</td><td>Medido</td><td>12_mis_solicitudes.txt</td></tr>
+<tr><td>E14</td><td>Mensajes en audit-events</td><td>2 eventos con clave = id de la PQR y header x-correlation-id</td><td>REQUEST_CREATED y REQUEST_STATUS_CHANGED, misma partición, x-correlation-id presente</td><td>✅</td><td>Medido</td><td>13_kafka_mensajes.txt</td></tr>
+<tr><td>E15</td><td>Efecto de sigc-notifications</td><td>Notificación registrada</td><td>Notificación con estado SIMULATED</td><td>✅</td><td>Simulado (correo)</td><td>14_notificacion.txt</td></tr>
+<tr><td>E16</td><td>resumenIndicadores dos veces + volumenPorEstado</td><td>1.ª calcula, 2.ª desde Redis (mismo generadoEn, más rápida); claves con TTL ≈ 30 s</td><td>Mismo generadoEn; 1.ª ≈ 1,3 s, 2.ª ≈ 0,05 s; 3 claves sigc:gateway:*, TTL 28 s</td><td>✅</td><td>Medido</td><td>15_indicadores_redis.txt</td></tr>
+<tr><td>E17</td><td>Trazabilidad por correlation ID</td><td>Mismo correlationId en gateway, API, productor y ambos consumidores</td><td>Logs [GATEWAY], [API-CLIENT], [OUTBOX], [KAFKA-PRODUCER], [AUDITORIA], [NOTIFICACIONES] con el mismo id</td><td>✅</td><td>Medido</td><td>16_trazabilidad.txt</td></tr>
+<tr><td>E18</td><td>API detenida: timeout + retry</td><td>Error controlado UNAVAILABLE tras reintentos</td><td>1.er intento ≈ 7 s (3 intentos) → UNAVAILABLE</td><td>✅</td><td>Simulado (fallo provocado)</td><td>17_resiliencia.txt</td></tr>
+<tr><td>E19</td><td>API detenida: circuit breaker</td><td>Tras ≥ 5 fallos se abre y responde rápido</td><td>Estado OPEN; intentos 3–6 en ≈ 0,02–0,04 s sin llamar a la API</td><td>✅</td><td>Simulado</td><td>17_resiliencia.txt</td></tr>
+<tr><td>E20</td><td>API detenida: respaldo de indicadores</td><td>Último valor con desactualizado: true</td><td>desactualizado: true</td><td>✅</td><td>Simulado</td><td>17_resiliencia.txt</td></tr>
+<tr><td>E21</td><td>Recuperación de la API</td><td>El gateway vuelve a responder (HALF_OPEN → CLOSED)</td><td>solicitudes y resumenIndicadores OK, desactualizado: false</td><td>✅</td><td>Medido</td><td>18_recuperacion.txt</td></tr>
+<tr><td>E22</td><td>Idempotencia ante evento duplicado</td><td>Se ignora el duplicado</td><td>Ver Entrega 2</td><td>✅</td><td>Simulado</td><td>evidencias/salidas/10_duplicado.txt, 11_idempotencia.txt</td></tr>
+<tr><td>E23</td><td>Mensajes inválidos → DLT</td><td>Van a audit-events.DLT y se guardan en failed_events</td><td>Ver Entrega 2</td><td>✅</td><td>Simulado</td><td>evidencias/salidas/12–14_*.txt</td></tr>
+<tr><td>E24</td><td>Dashboard del frontend con indicadores del gateway</td><td>Tarjetas con datos de resumenIndicadores</td><td>Ver capturas</td><td>✅</td><td>Medido</td><td>evidencias/capturas/</td></tr>
+</table>
+<p>Las salidas completas de cada caso están en <code>evidencias/final/</code> del repositorio y se presentan comentadas en el documento <i>G3 SIGC Evidencias de funcionamiento.pdf</i> (Actividad 3.1, Anexo 13); por eso no se duplican aquí. Tipo de resultado: <b>Medido</b> = ejecutado contra el sistema real; <b>Simulado</b> = fallo provocado a propósito o efecto externo no real (correo en modo SIMULATED); <b>Futuro</b> = no implementado (pruebas de carga, E2E automatizadas del frontend, SMTP real, Kafka multi-broker).</p>
+
+
+
+<h3>9.5 Capturas</h3>
+<style>.cap{page-break-inside:avoid;margin:6px 0 10px}.cap img{width:100%;border:1px solid #999}.cap .pie{font-size:8.5pt;color:#333;margin-top:2px}</style>
+<div class="cap"><img src="../evidencias/capturas/02_frontend_dashboard_gateway.png"><div class="pie"><b>Imagen 1.</b> Dashboard del administrador en el frontend (http://localhost:4300). Las tarjetas y la línea "Indicadores vía Gateway GraphQL" provienen de la query <code>resumenIndicadores</code> del gateway (caché Redis). Demuestra la integración frontend → gateway → API.</div></div>
+<div class="cap"><img src="../evidencias/capturas/01_frontend_login.png"><div class="pie"><b>Imagen 2.</b> Pantalla de inicio de sesión del frontend servido por nginx en Docker.</div></div>
+<div class="cap"><img src="../evidencias/capturas/05_kafka_ui_topics.png"><div class="pie"><b>Imagen 3.</b> Kafka UI: tópicos <code>audit-events</code> (3 particiones) y <code>audit-events.DLT</code> creados por <code>kafka-init</code>.</div></div>
+<div class="cap"><img src="../evidencias/capturas/06_kafka_ui_consumers.png"><div class="pie"><b>Imagen 4.</b> Grupos de consumidores <code>sigc-audit</code>, <code>sigc-notifications</code> y <code>sigc-dlt</code> en estado STABLE con lag 0 (todos los eventos procesados).</div></div>
+<div class="cap"><img src="../evidencias/capturas/04_graphiql.png"><div class="pie"><b>Imagen 5.</b> GraphiQL disponible en http://localhost:8081/graphiql para explorar el schema del gateway.</div></div>
+
+
+<h3>9.6 Estado de las funcionalidades</h3>
+<table class="std">
+  <tr><th style="width:38%">Funcionalidad</th><th style="width:13%">Estado</th><th>Observación / limitación</th></tr>
+  <tr><td>API REST (auth JWT, radicación, consultas, estado, historial, administración)</td><td class="ok">Implementado</td><td>Contrato en <code>contracts/openapi.yaml</code>.</td></tr>
+  <tr><td>Kafka: outbox, consumidores de auditoría y notificación, idempotencia, DLT</td><td class="ok">Implementado</td><td>Un solo broker con factor de replicación 1 (entorno de desarrollo).</td></tr>
+  <tr><td>Gateway GraphQL (queries, mutations, resolvers, composición)</td><td class="ok">Implementado</td><td>El gateway no tiene base de datos propia; delega en la API REST.</td></tr>
+  <tr><td>Seguridad: JWT con roles, autorización por operación, CORS, secretos en .env</td><td class="ok">Implementado</td><td>Clave HMAC compartida entre API y gateway; sin rotación de claves ni refresh token.</td></tr>
+  <tr><td>Resiliencia: timeout, retry, circuit breaker</td><td class="ok">Implementado</td><td>Aplicado a las llamadas gateway → API.</td></tr>
+  <tr><td>Redis como caché de indicadores</td><td class="ok">Implementado</td><td>Expiración corta; los datos pueden tener hasta esa antigüedad.</td></tr>
+  <tr><td>Identificador de correlación de extremo a extremo</td><td class="ok">Implementado</td><td>Correlación por logs; sin trazas distribuidas (OpenTelemetry).</td></tr>
+  <tr><td>Docker Compose (db, kafka, kafka-init, kafka-ui, redis, api, gateway, frontend)</td><td class="ok">Implementado</td><td>Ejecución local; sin despliegue en la nube.</td></tr>
+  <tr><td>Frontend Angular consumiendo el gateway</td><td class="par">Parcial</td><td>Solo los indicadores del tablero usan GraphQL; las demás pantallas usan la API REST directamente.</td></tr>
+  <tr><td>Notificación por correo</td><td class="par">Parcial</td><td>Por defecto en modo simulado (<code>MAIL_ENABLED=false</code>); con credenciales SMTP envía correos reales. Entrega al menos una vez.</td></tr>
+  <tr><td>Métricas</td><td class="par">Parcial</td><td>Actuator (health/metrics); sin Prometheus ni Grafana.</td></tr>
+  <tr><td>SSE / WebSocket</td><td class="pen">No implementado (decisión)</td><td>El caso de uso no requiere tiempo real; el tablero se actualiza al consultar. Se deja como trabajo futuro.</td></tr>
+  <tr><td><code>GET /documents/my</code> (autoservicio de documentos)</td><td class="pen">Pendiente</td><td>Definido en el contrato como propuesta.</td></tr>
+  <tr><td>Alta disponibilidad (varios brokers, varias réplicas de la API)</td><td class="pen">Pendiente</td><td>El relay del outbox supone una sola instancia de la API.</td></tr>
+</table>
+</div></div>
+
+<div class="sec"><h2>10. Conclusión</h2><div class="body">
+<p>Se cumplió el objetivo general: SIGC funciona de extremo a extremo como un sistema distribuido que se levanta con un solo comando de Docker Compose. Frente a los objetivos específicos: (1) la API REST concentra la lógica de negocio y la persistencia; (2) Kafka desacopla la auditoría y la notificación de la petición HTTP, de modo que un fallo del correo ya no impide cambiar el estado de una PQR, y la idempotencia y el DLT evitan efectos duplicados y ciclos infinitos de reprocesamiento; (3) el gateway GraphQL ofrece un punto de entrada único y tipado, aplica la seguridad y la resiliencia en la frontera del sistema y, con el identificador de correlación, permite seguir una operación a través de todos los componentes.</p>
+<p>Entre los aprendizajes se destacan: publicar eventos solo después de confirmar el cambio (outbox), no asumir entrega exactamente una vez, no reintentar operaciones no idempotentes, no duplicar en el gateway la lógica que ya existe en REST y aplicar cada componente adicional (Redis, tiempo real) solo cuando responde a una necesidad concreta.</p>
+<p><b>Limitaciones:</b> entorno de un solo broker y una instancia de la API; correo simulado por defecto; frontend integrado con el gateway solo en el tablero; observabilidad basada en logs y health checks sin trazas distribuidas; datos ficticios y sin validación en una entidad real. <b>En una segunda versión</b> se propone: clúster de Kafka con replicación, relay del outbox con <code>SKIP LOCKED</code> o CDC (Debezium), OpenTelemetry con Prometheus y Grafana, migración completa del frontend al gateway, gestión de secretos con un vault y despliegue en la nube con CI/CD.</p>
+</div></div>
+
+<div class="sec ref"><h2>11. Referencias</h2><div class="body">
+<p>Apache Software Foundation. (2024). <i>Apache Kafka documentation</i> (versión 3.9). https://kafka.apache.org/documentation/</p>
+<p>Congreso de la República de Colombia. (2011). <i>Ley 1437 de 2011, por la cual se expide el Código de Procedimiento Administrativo y de lo Contencioso Administrativo</i>. Diario Oficial 47.956.</p>
+<p>Congreso de la República de Colombia. (2012). <i>Ley Estatutaria 1581 de 2012, por la cual se dictan disposiciones generales para la protección de datos personales</i>. Diario Oficial 48.587.</p>
+<p>Congreso de la República de Colombia. (2015). <i>Ley Estatutaria 1755 de 2015, por medio de la cual se regula el derecho fundamental de petición</i>. Diario Oficial 49.559.</p>
+<p>GraphQL Foundation. (2021). <i>GraphQL specification</i> (October 2021 edition). https://spec.graphql.org/October2021/</p>
+<p>Jones, M., Bradley, J., &amp; Sakimura, N. (2015). <i>JSON Web Token (JWT)</i> (RFC 7519). Internet Engineering Task Force. https://doi.org/10.17487/RFC7519</p>
+<p>Kreps, J., Narkhede, N., &amp; Rao, J. (2011). Kafka: A distributed messaging system for log processing. En <i>Proceedings of the NetDB Workshop</i>.</p>
+<p>Ministerio de Comercio, Industria y Turismo. (2013). <i>Decreto 1377 de 2013, por el cual se reglamenta parcialmente la Ley 1581 de 2012</i>.</p>
+<p>Newman, S. (2021). <i>Building microservices: Designing fine-grained systems</i> (2.ª ed.). O'Reilly Media.</p>
+<p>Nygard, M. T. (2018). <i>Release it!: Design and deploy production-ready software</i> (2.ª ed.). Pragmatic Bookshelf.</p>
+<p>Redis Ltd. (2024). <i>Redis documentation</i>. https://redis.io/docs/</p>
+<p>Resilience4j. (2024). <i>Resilience4j user guide</i>. https://resilience4j.readme.io/docs</p>
+<p>Richardson, C. (2018). <i>Microservices patterns: With examples in Java</i>. Manning Publications.</p>
+<p>VMware Tanzu / Broadcom. (2025). <i>Spring Boot reference documentation</i>. https://docs.spring.io/spring-boot/</p>
+<p>VMware Tanzu / Broadcom. (2025). <i>Spring for GraphQL reference documentation</i>. https://docs.spring.io/spring-graphql/reference/</p>
+<p>VMware Tanzu / Broadcom. (2025). <i>Spring for Apache Kafka reference</i>. https://docs.spring.io/spring-kafka/reference/</p>
+</div></div>
+
+<div class="sec pb"><h2>12. Presupuesto</h2><div class="body">
+<p class="note"><b>Criterio:</b> los valores marcados como <b>REAL</b> corresponden a gastos efectivamente realizados (ninguno: todo el software es libre y la ejecución fue local). Los marcados como <b>ESTIMADO</b> valoran recursos propios para dimensionar el proyecto; no son desembolsos. Supuestos: tarifa de referencia de practicante/desarrollador junior de COP 25.000 por hora; 120 horas por integrante durante el semestre; depreciación de equipos proporcional a 4 meses de uso de un equipo de COP 3.000.000 con vida útil de 36 meses.</p>
+<table class="std">
+  <tr><th>Rubros</th><th>Descripción</th><th>Unidad</th><th class="right">Cantidad</th><th class="right">Valor unitario (COP)</th><th class="right">Total (COP)</th><th>Tipo</th></tr>
+  <tr><td colspan="7" style="background:#e3eccf"><b>Capital humano</b></td></tr>
+  <tr><td>Desarrollo</td><td>Santiago Murcia Cangrejo: análisis, desarrollo, pruebas y documentación</td><td>Hora</td><td class="right">120</td><td class="right">25.000</td><td class="right">3.000.000</td><td>ESTIMADO</td></tr>
+  <tr><td>Desarrollo</td><td>Hallys Andrea Escobar Paloma: análisis, desarrollo, pruebas y documentación</td><td>Hora</td><td class="right">120</td><td class="right">25.000</td><td class="right">3.000.000</td><td>ESTIMADO</td></tr>
+  <tr><td colspan="7" style="background:#e3eccf"><b>Maquinarias y equipos</b></td></tr>
+  <tr><td>Computadores</td><td>Equipos personales (depreciación de 4 meses)</td><td>Equipo</td><td class="right">2</td><td class="right">333.333</td><td class="right">666.666</td><td>ESTIMADO</td></tr>
+  <tr><td colspan="7" style="background:#e3eccf"><b>Materiales e insumos</b></td></tr>
+  <tr><td>Software</td><td>Java, Spring, Kafka, MariaDB, Redis, Angular, Docker, Git (licencias libres)</td><td>Licencia</td><td class="right">—</td><td class="right">0</td><td class="right">0</td><td>REAL</td></tr>
+  <tr><td>Conectividad</td><td>Internet y energía de los hogares (proporción de uso)</td><td>Mes</td><td class="right">4</td><td class="right">30.000</td><td class="right">120.000</td><td>ESTIMADO</td></tr>
+  <tr><td colspan="7" style="background:#e3eccf"><b>Servicios técnicos</b></td></tr>
+  <tr><td>Hosting / nube</td><td>No se usó: ejecución local con Docker Compose</td><td>—</td><td class="right">0</td><td class="right">0</td><td class="right">0</td><td>REAL</td></tr>
+  <tr><td>Repositorio</td><td>GitHub (plan gratuito)</td><td>—</td><td class="right">1</td><td class="right">0</td><td class="right">0</td><td>REAL</td></tr>
+  <tr><td colspan="7" style="background:#e3eccf"><b>Salidas de campo</b></td></tr>
+  <tr><td>No aplica</td><td>El proyecto no requirió salidas de campo</td><td>—</td><td class="right">0</td><td class="right">0</td><td class="right">0</td><td>REAL</td></tr>
+  <tr class="tot"><td>TOTAL</td><td>Gasto real: COP 0 · Valoración estimada del proyecto</td><td></td><td></td><td></td><td class="right">6.786.666</td><td></td></tr>
+</table>
+</div></div>
+
+<div class="sec"><h2>13. Anexos</h2><div class="body">
+<p>Para no duplicar información, los anexos técnicos se encuentran en el repositorio y en el ZIP de la entrega (misma versión, etiqueta <code>v3.0.0</code>):</p>
+<table class="std">
+  <tr><th style="width:34%">Anexo</th><th>Ubicación</th></tr>
+  <tr><td>A. Instalación, ejecución, puertos, variables y limitaciones</td><td><code>README.md</code> y <code>.env.example</code></td></tr>
+  <tr><td>B. Arquitectura, responsabilidades y comunicación</td><td><code>README.md</code> (sección Arquitectura), <code>docs/estructura-proyecto.md</code>, <code>docs/kafka.md</code>, <code>gateway/README.md</code></td></tr>
+  <tr><td>C. Contratos (API, eventos, GraphQL)</td><td><code>contracts/openapi.yaml</code>, <code>contracts/asyncapi.yaml</code>, <code>contracts/events/request-event.schema.json</code>, <code>contracts/schema.graphql</code></td></tr>
+  <tr><td>D. Modelo de datos y script SQL</td><td><code>docs/modelo-datos.md</code>, <code>docs/modelo-datos.png</code>, <code>backend-actual/sigcapi.sql</code></td></tr>
+  <tr><td>E. Docker</td><td><code>docker-compose.yml</code>, <code>api.documental/Dockerfile</code>, <code>gateway/Dockerfile</code>, <code>Front-Angular-ProyectoAula8voSemestre-main/Dockerfile</code></td></tr>
+  <tr><td>F. Pruebas automatizadas</td><td><code>api.documental/src/test/</code> y <code>gateway/src/test/</code></td></tr>
+  <tr><td>G. Evidencias y scripts de demostración</td><td><code>evidencias/</code>, <code>scripts/</code>, documento "G3 SIGC Evidencias de funcionamiento.pdf"</td></tr>
+  <tr><td>H. Colección Postman</td><td><code>docs/API_Documental.postman_collection.json</code></td></tr>
+</table>
+<h3>Aporte individual</h3>
+<table class="std">
+  <tr><th style="width:30%">Integrante</th><th>Aporte</th></tr>
+  <tr><td>Santiago Murcia Cangrejo</td><td>Participó en el análisis, el diseño de la arquitectura, el desarrollo, las pruebas y la documentación de todos los componentes. [Completar por el equipo: detalle de aporte]</td></tr>
+  <tr><td>Hallys Andrea Escobar Paloma</td><td>Participó en el análisis, el diseño de la arquitectura, el desarrollo, las pruebas y la documentación de todos los componentes. [Completar por el equipo: detalle de aporte]</td></tr>
+</table>
+<p class="note">Los campos de validación institucional (revisión, aprobación y firmas) corresponden al docente y se dejan para su diligenciamiento.</p>
+</div></div>
+
+</body>
+</html>

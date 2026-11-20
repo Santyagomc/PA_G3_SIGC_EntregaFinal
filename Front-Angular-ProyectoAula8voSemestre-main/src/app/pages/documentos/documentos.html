@@ -1,0 +1,135 @@
+<div class="page">
+  <header class="page__row">
+    <div>
+      <h1 class="page__title">Gestión de documentos</h1>
+      <p class="page__sub">Documentos adjuntos a solicitudes (vista alineada al prototipo)</p>
+    </div>
+    <button type="button" class="sigc-btn sigc-btn--primary" (click)="openUpload()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></svg>
+      Subir documento
+    </button>
+  </header>
+
+  <div class="stats-mini">
+    <div class="sigc-card">
+      <div class="sigc-card__bd stat-mini">
+        <div>
+          <p class="stat-mini__l">Total</p>
+          <p class="stat-mini__n">{{ stats().total }}</p>
+        </div>
+      </div>
+    </div>
+    @for (e of stats().byType; track e[0]) {
+      <div class="sigc-card">
+        <div class="sigc-card__bd stat-mini">
+          <div>
+            <p class="stat-mini__l">{{ typeStatLabel(e[0]) }}</p>
+            <p class="stat-mini__n">{{ e[1] }}</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="sigc-card filt">
+    <div class="sigc-card__bd filt__inner">
+      <input class="sigc-input filt__search" placeholder="Buscar por nombre de archivo…" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+      <select class="sigc-select filt__sel" [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event)">
+        <option value="all">Todos los tipos</option>
+        <option value="IDENTIFICACION">Identificación</option>
+        <option value="SOPORTE">Soporte</option>
+        <option value="EVIDENCIA">Evidencia</option>
+        <option value="FACTURA">Factura</option>
+        <option value="CONTRATO">Contrato</option>
+        <option value="RESPUESTA_ENTIDAD">Respuesta entidad</option>
+        <option value="OTRO">Otro</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="sigc-card">
+    <div class="sigc-card__hd">
+      <h2 class="sigc-card__title">Listado</h2>
+      <p class="sigc-card__desc">{{ filtered().length }} documento(s)</p>
+    </div>
+    <div class="sigc-table-wrap">
+      <table class="sigc-table">
+        <thead>
+          <tr>
+            <th>Archivo</th>
+            <th>Tipo</th>
+            <th>Solicitud</th>
+            <th>Fecha</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filtered().length === 0) {
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 2rem; color: var(--muted-foreground)">Sin documentos</td>
+            </tr>
+          }
+          @for (d of filtered(); track d.id) {
+            <tr>
+              <td>
+                <strong>{{ d.file_name }}</strong>
+                <div class="muted small">{{ d.file_path }}</div>
+              </td>
+              <td><span [class]="badgeClass(d.type)">{{ labels[d.type] }}</span></td>
+              <td>{{ requestTitle(d.request_id) }}</td>
+              <td>{{ formatDate(d.created_at) }}</td>
+              <td>
+                <button type="button" class="sigc-btn sigc-btn--ghost sigc-btn--sm" disabled>Ver</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+@if (uploadOpen()) {
+  <div class="sigc-dialog-backdrop" (click)="closeUpload()">
+    <div class="sigc-dialog" (click)="$event.stopPropagation()">
+      <div class="sigc-card__hd">
+        <h2 class="sigc-card__title">Subir documento</h2>
+        <p class="sigc-card__desc">Carga múltiple vinculada a una solicitud existente.</p>
+      </div>
+      <div class="sigc-card__bd">
+        @if (uploadError()) {
+          <div class="auth-alert" style="margin-bottom: 1rem">{{ uploadError() }}</div>
+        }
+        <div class="sigc-field">
+          <label class="sigc-label">Solicitud</label>
+          <select class="sigc-select" [ngModel]="selectedRequestId() ?? ''" (ngModelChange)="onRequestChange($event)">
+            <option value="">Seleccione…</option>
+            @for (request of availableRequests(); track request.id) {
+              <option [value]="request.id">#{{ request.id }} - {{ request.title }}</option>
+            }
+          </select>
+        </div>
+        <div class="sigc-field">
+          <label class="sigc-label">Archivos</label>
+          <input class="sigc-input" type="file" multiple (change)="onFilesSelected($event)" />
+        </div>
+        @if (selectedFiles().length > 0) {
+          <div class="detail-box" style="margin-top: 1rem">
+            @for (file of selectedFiles(); track file.name + file.size) {
+              <p>{{ file.name }} <span class="muted">({{ (file.size / 1024).toFixed(1) }} KB)</span></p>
+            }
+          </div>
+        }
+        <div class="dlg-actions">
+          <button type="button" class="sigc-btn sigc-btn--outline" (click)="closeUpload()">Cancelar</button>
+          <button type="button" class="sigc-btn sigc-btn--primary" [disabled]="uploading()" (click)="submitUpload()">
+            @if (uploading()) {
+              <span class="sigc-spinner"></span>
+            }
+            Cargar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

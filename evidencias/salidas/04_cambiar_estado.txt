@@ -1,0 +1,25 @@
+# PUT /requests/1/status?status=CERRADO
+# 2026-10-15 00:09:58
+$ call PUT /requests/1/status?status=CERRADO&observations=Respuesta%20de%20fondo%20enviada%20al%20ciudadano
+
+HTTP 200  PUT /requests/1/status?status=CERRADO&observations=Respuesta%20de%20fondo%20enviada%20al%20ciudadano
+{
+    "data": {
+        "acceptedDataPolicy": true,
+        "city": "Neiva",
+        "createdAt": "2026-10-15T00:09:56",
+        "description": "Radiqué una petición hace 20 días y no he recibido respuesta.",
+        "document": "1075000001",
+        "email": "ciudadano.demo@example.com",
+        "expirationDate": "2030-12-31",
+        "fullName": "Ciudadano Demo Kafka",
+        "id": 1,
+        "mailStatus": false,
+        "phone": "3001234567",
+        "status": "CERRADO",
+        "title": "Demora en respuesta a mi petición",
+        "type": "QUEJA"
+    },
+    "exito": true,
+    "mensaje": "Estado actualizado. Evento REQUEST_STATUS_CHANGED registrado: la auditoría y la notificación se procesan de forma asíncrona."
+}

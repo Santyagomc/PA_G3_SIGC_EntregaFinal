@@ -1,0 +1,71 @@
+# Simulación de mensajes no procesables
+# 2026-10-15 00:11:48
+$ bash -c 
+call () 
+{ 
+    local m="$1" p="$2";
+    shift 2;
+    local tmp;
+    tmp="$(mktemp)";
+    local code;
+    code=$(curl -s -o "$tmp" -w '%{http_code}' -X "$m" "$API$p" -H "Authorization: Bearer $TOKEN" "$@");
+    echo "HTTP $code  $m $p";
+    pretty < "$tmp";
+    rm -f "$tmp"
+}
+pretty () 
+{ 
+    if command -v jq > /dev/null 2>&1; then
+        jq .;
+    else
+        "$(command -v python3 || command -v python)" -m json.tool --no-ensure-ascii 2> /dev/null || cat;
+    fi
+}; API='http://localhost:8080'; TOKEN='eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDAwMDAwMDAxIiwiaWF0IjoxNzkyMDQwOTg5LCJleHAiOjE3OTIxMjczODl9.QlsISKjdTcFfhyZLtAgsAoEnbP4Nce2yUX72c6r_ne0'
+call POST /events/simulate/invalid-payload; echo
+call POST /events/simulate/contract-violation; echo
+call POST /events/simulate/unknown-request
+
+HTTP 202  POST /events/simulate/invalid-payload
+{
+    "data": {
+        "scenario": "INVALID_PAYLOAD",
+        "topic": "audit-events",
+        "partition": 0,
+        "offset": 3,
+        "key": "simulador",
+        "payload": "{\"eventId\": \"ce65d5af-e7f9-4b98-a5cb-8ac44ede42ac\", \"eventType\": \"REQUEST_STATUS_CHANGED\", ",
+        "expectedOutcome": "InvalidEventException sin reintentos; el mensaje llega a audit-events.DLT y se guarda en failed_events."
+    },
+    "exito": true,
+    "mensaje": "Mensaje con JSON inválido publicado."
+}
+
+HTTP 202  POST /events/simulate/contract-violation
+{
+    "data": {
+        "scenario": "CONTRACT_VIOLATION",
+        "topic": "audit-events",
+        "partition": 0,
+        "offset": 4,
+        "key": "simulador",
+        "payload": "{\"eventId\":\"453280a2-e4c7-48dc-9509-9ed02c8a2a63\",\"eventType\":\"REQUEST_STATUS_CHANGED\",\"eventVersion\":1,\"source\":\"simulador\"}",
+        "expectedOutcome": "InvalidEventException (faltan requestId, timestamp, estados y actorId); va al DLT sin reintentos."
+    },
+    "exito": true,
+    "mensaje": "Mensaje que viola el contrato publicado."
+}
+
+HTTP 202  POST /events/simulate/unknown-request
+{
+    "data": {
+        "scenario": "UNKNOWN_REQUEST",
+        "topic": "audit-events",
+        "partition": 1,
+        "offset": 0,
+        "key": "999999999",
+        "payload": "{\"eventId\":\"1d03b3cc-a67e-4cf4-90bb-7959bf7be8f3\",\"eventType\":\"REQUEST_STATUS_CHANGED\",\"eventVersion\":1,\"source\":\"sigcapi.requests\",\"timestamp\":\"2026-10-15T05:11:50.461362948Z\",\"requestId\":999999999,\"tipoSolicitud\":\"QUEJA\",\"estadoAnterior\":\"CREADO\",\"estadoNuevo\":\"CERRADO\",\"actor\":\"simulador\",\"actorId\":1,\"observaciones\":\"Evento simulado de una PQR inexistente\"}",
+        "expectedOutcome": "NonRetryableEventException ('La PQR 999999999 no existe'); va al DLT sin reintentos."
+    },
+    "exito": true,
+    "mensaje": "Evento de PQR inexistente publicado."
+}

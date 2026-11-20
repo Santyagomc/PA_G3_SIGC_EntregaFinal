@@ -1,0 +1,6 @@
+# Registro de un CONSULTOR (REST) y acceso DENEGADO a una operación ADMIN → FORBIDDEN
+# 2026-11-19 21:23:04
+
+POST http://localhost:8080/auth/register
+{"exito":true,"mensaje":"Usuario registrado exitosamente."}
+[HTTP 201]

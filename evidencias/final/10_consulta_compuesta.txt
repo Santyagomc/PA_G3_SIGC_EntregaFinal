@@ -1,0 +1,7 @@
+# Query solicitud(id) con historial: composición de 2 llamadas REST; el historial lo escribió el consumidor Kafka sigc-audit
+# 2026-11-19 21:23:11
+
+> query { solicitud(id: "4") { id titulo estado tipo correoEnviado historial { estadoAnterior estadoNuevo actor eventId observaciones cambiadoEn } } }
+{"data":{"solicitud":{"id":"4","titulo":"Demora en respuesta de peticion","estado":"CERRADO","tipo":"QUEJA","correoEnviado":true,"historial":[{"estadoAnterior":null,"estadoNuevo":"CREADO","actor":"921230401","eventId":"07669372-de8b-438a-8156-6d5e2d07cdd6","observaciones":null,"cambiadoEn":"2026-11-19T21:23:06"},{"estadoAnterior":"CREADO","estadoNuevo":"CERRADO","actor":"1000000001","eventId":"df2bc651-64dc-4828-9a3e-00c4ffd85ef5","observaciones":"Respuesta de fondo enviada","cambiadoEn":"2026-11-19T21:23:06"}]}}}
+[HTTP 200 � 0.103932s]
+

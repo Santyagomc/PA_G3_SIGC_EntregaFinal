@@ -1,0 +1,7 @@
+# Query misSolicitudes (CONSULTOR)
+# 2026-11-19 21:23:12
+
+> query { misSolicitudes { totalElementos contenido { id titulo estado } } }
+{"data":{"misSolicitudes":{"totalElementos":1,"contenido":[{"id":"4","titulo":"Demora en respuesta de peticion","estado":"CERRADO"}]}}}
+[HTTP 200 · 0.068118s]
+

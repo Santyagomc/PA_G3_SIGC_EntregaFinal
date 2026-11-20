@@ -1,0 +1,178 @@
+<div class="page">
+  <header class="page__row">
+    <div>
+      <h1 class="page__title">Gestión de solicitudes</h1>
+      <p class="page__sub">
+        @if (auth.isStaff()) {
+          Administra todas las solicitudes del sistema
+        } @else {
+          Consulta y crea tus solicitudes
+        }
+      </p>
+    </div>
+    <button type="button" class="sigc-btn sigc-btn--primary" (click)="openCreate()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+      Nueva solicitud
+    </button>
+  </header>
+
+  <div class="sigc-card filt">
+    <div class="sigc-card__bd filt__inner">
+      <input
+        class="sigc-input filt__search"
+        placeholder="Buscar por título, nombre o ciudad…"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+      />
+      <select class="sigc-select filt__sel" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+        <option value="all">Todos los estados</option>
+        <option value="CREADO">Creado</option>
+        <option value="PENDIENTE">Pendiente</option>
+        <option value="CERRADO">Cerrado</option>
+      </select>
+      <select class="sigc-select filt__sel" [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event)">
+        <option value="all">Todos los tipos</option>
+        <option value="PETICIÓN">Petición</option>
+        <option value="QUEJA">Queja</option>
+        <option value="RECLAMO">Reclamo</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="sigc-card">
+    <div class="sigc-card__hd">
+      <h2 class="sigc-card__title">Listado</h2>
+      <p class="sigc-card__desc">{{ filtered().length }} solicitud(es)</p>
+    </div>
+    <div class="sigc-table-wrap">
+      <table class="sigc-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Tipo</th>
+            <th>Solicitante</th>
+            <th>Ciudad</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filtered().length === 0) {
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 2rem; color: var(--muted-foreground)">No hay resultados</td>
+            </tr>
+          }
+          @for (r of filtered(); track r.id) {
+            <tr>
+              <td>#{{ r.id }}</td>
+              <td class="cell-clip">{{ r.title }}</td>
+              <td><span [class]="typeClass(r.type)">{{ r.type }}</span></td>
+              <td>{{ r.full_name }}</td>
+              <td>{{ r.city }}</td>
+              <td>{{ formatDate(r.created_at) }}</td>
+              <td><span [class]="statusClass(r.status)">{{ r.status }}</span></td>
+              <td>
+                <button type="button" class="sigc-btn sigc-btn--ghost sigc-btn--sm" (click)="openDetail(r)">Ver</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+@if (dialogOpen()) {
+  <div class="sigc-dialog-backdrop" (click)="closeCreate()">
+    <div class="sigc-dialog" (click)="$event.stopPropagation()">
+      <div class="sigc-card__hd">
+        <h2 class="sigc-card__title">Crear solicitud</h2>
+        <p class="sigc-card__desc">Radicar PQRS (se envía al API si hay sesión válida)</p>
+      </div>
+      <div class="sigc-card__bd">
+        @if (formError()) {
+          <div class="auth-alert" style="margin-bottom: 1rem">{{ formError() }}</div>
+        }
+        <div class="sigc-field">
+          <label class="sigc-label">Tipo</label>
+          <select class="sigc-select" [ngModel]="newReq().type" (ngModelChange)="patchNewReq('type', $event)">
+            <option value="PETICIÓN">Petición</option>
+            <option value="QUEJA">Queja</option>
+            <option value="RECLAMO">Reclamo</option>
+          </select>
+        </div>
+        <div class="sigc-field">
+          <label class="sigc-label">Nombre completo</label>
+          <input class="sigc-input" [ngModel]="newReq().full_name" (ngModelChange)="patchNewReq('full_name', $event)" />
+        </div>
+        <div class="sigc-field">
+          <label class="sigc-label">Correo</label>
+          <input class="sigc-input" type="email" [ngModel]="newReq().email" (ngModelChange)="patchNewReq('email', $event)" />
+        </div>
+        <div class="sigc-field">
+          <label class="sigc-label">Título</label>
+          <input class="sigc-input" [ngModel]="newReq().title" (ngModelChange)="patchNewReq('title', $event)" />
+        </div>
+        <div class="sigc-field">
+          <label class="sigc-label">Ciudad / municipio</label>
+          <select class="sigc-select" [ngModel]="newReq().city" (ngModelChange)="patchNewReq('city', $event)">
+            <option value="">Seleccione…</option>
+            <option value="Neiva">Neiva</option>
+            <option value="Pitalito">Pitalito</option>
+            <option value="Garzón">Garzón</option>
+            <option value="La Plata">La Plata</option>
+            <option value="Campoalegre">Campoalegre</option>
+            <option value="Rivera">Rivera</option>
+          </select>
+        </div>
+        <div class="sigc-field">
+          <label class="sigc-label">Teléfono</label>
+          <input class="sigc-input" [ngModel]="newReq().phone" (ngModelChange)="patchNewReq('phone', $event)" placeholder="Ej. 3201234567" />
+        </div>
+        <div class="sigc-field">
+          <label class="sigc-label">Descripción</label>
+          <textarea class="sigc-textarea" rows="4" [ngModel]="newReq().description" (ngModelChange)="patchNewReq('description', $event)"></textarea>
+        </div>
+        <div class="dlg-actions">
+          <button type="button" class="sigc-btn sigc-btn--outline" (click)="closeCreate()">Cancelar</button>
+          <button type="button" class="sigc-btn sigc-btn--primary" [disabled]="saving()" (click)="submitCreate()">
+            @if (saving()) {
+              <span class="sigc-spinner"></span>
+            }
+            Radicar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (detailOpen() && selected(); as r) {
+  <div class="sigc-dialog-backdrop" (click)="closeDetail()">
+    <div class="sigc-dialog sigc-dialog--wide" (click)="$event.stopPropagation()">
+      <div class="sigc-card__hd">
+        <h2 class="sigc-card__title">Solicitud #{{ r.id }} <span [class]="statusClass(r.status)">{{ r.status }}</span></h2>
+        <p class="sigc-card__desc">{{ r.type }} — {{ formatDate(r.created_at) }}</p>
+      </div>
+      <div class="sigc-card__bd">
+        <p><strong>Título</strong><br />{{ r.title }}</p>
+        <p><strong>Descripción</strong><br />{{ r.description }}</p>
+        <div class="grid2">
+          <p><strong>Solicitante</strong><br />{{ r.full_name }}<br /><span class="muted">{{ r.email }}</span></p>
+          <p><strong>Ubicación</strong><br />{{ r.city }}<br />Tel: {{ r.phone }}</p>
+        </div>
+        @if (auth.isStaff()) {
+          <div class="dlg-actions" style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem">
+            <button type="button" class="sigc-btn sigc-btn--outline" disabled>Cambiar estado</button>
+            <button type="button" class="sigc-btn sigc-btn--primary" disabled>Responder</button>
+          </div>
+        }
+        <div class="dlg-actions">
+          <button type="button" class="sigc-btn sigc-btn--outline" (click)="closeDetail()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

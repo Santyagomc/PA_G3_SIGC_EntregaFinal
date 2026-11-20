@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sigc.local/contracts/events/request-event.v1.json",
+  "title": "RequestEvent v1 (tópico audit-events)",
+  "description": "Evento de dominio del ciclo de vida de una PQR. No contiene datos personales del ciudadano (Ley 1581 de 2012). Los consumidores ignoran campos desconocidos.",
+  "type": "object",
+  "required": ["eventId", "eventType", "eventVersion", "source", "timestamp", "requestId", "estadoNuevo", "actorId"],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid", "description": "Clave de idempotencia" },
+    "eventType": { "type": "string", "enum": ["REQUEST_CREATED", "REQUEST_STATUS_CHANGED"] },
+    "eventVersion": { "type": "integer", "const": 1 },
+    "source": { "type": "string", "examples": ["sigcapi.requests"] },
+    "timestamp": { "type": "string", "format": "date-time", "description": "ISO-8601 UTC; momento del commit en BD" },
+    "requestId": { "type": "integer", "minimum": 1, "description": "Id de la PQR; también es la clave del mensaje Kafka" },
+    "tipoSolicitud": { "type": ["string", "null"], "enum": ["PETICIÓN", "QUEJA", "RECLAMO", null] },
+    "estadoAnterior": { "type": ["string", "null"], "enum": ["CREADO", "FALTA_DOCUMENTACION", "CERRADO", null] },
+    "estadoNuevo": { "type": "string", "enum": ["CREADO", "FALTA_DOCUMENTACION", "CERRADO"] },
+    "actor": { "type": ["string", "null"], "description": "Documento del usuario que originó el cambio" },
+    "actorId": { "type": "integer", "minimum": 1 },
+    "observaciones": { "type": ["string", "null"], "maxLength": 500 }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "eventType": { "const": "REQUEST_STATUS_CHANGED" } } },
+      "then": { "required": ["estadoAnterior"], "properties": { "estadoAnterior": { "type": "string" } } }
+    }
+  ],
+  "examples": [
+    {
+      "eventId": "2f0b1c4e-8a7d-4a4b-9a55-0e6b3f3f8d11",
+      "eventType": "REQUEST_CREATED",
+      "eventVersion": 1,
+      "source": "sigcapi.requests",
+      "timestamp": "2026-10-05T19:30:12.104Z",
+      "requestId": 1024,
+      "tipoSolicitud": "QUEJA",
+      "estadoAnterior": null,
+      "estadoNuevo": "CREADO",
+      "actor": "1075000001",
+      "actorId": 2,
+      "observaciones": null
+    },
+    {
+      "eventId": "8a3f4f0e-5c1b-4b7e-9d0a-2f6c1e7b9a41",
+      "eventType": "REQUEST_STATUS_CHANGED",
+      "eventVersion": 1,
+      "source": "sigcapi.requests",
+      "timestamp": "2026-10-05T19:32:00.512Z",
+      "requestId": 1024,
+      "tipoSolicitud": "QUEJA",
+      "estadoAnterior": "CREADO",
+      "estadoNuevo": "CERRADO",
+      "actor": "1000000001",
+      "actorId": 1,
+      "observaciones": "Respuesta de fondo enviada"
+    }
+  ]
+}

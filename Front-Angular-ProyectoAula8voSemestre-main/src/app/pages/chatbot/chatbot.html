@@ -1,0 +1,126 @@
+@if (isPublicMode) {
+  <header class="public-bar">
+    <a routerLink="/inicio" class="public-bar__back">← Inicio</a>
+    <span class="public-bar__tag">Asistente público</span>
+    <div class="public-bar__actions">
+      <a routerLink="/login" class="public-bar__link">Ingresar</a>
+      <a routerLink="/register" class="sigc-btn sigc-btn--primary sigc-btn--sm">Registrarse</a>
+    </div>
+  </header>
+}
+
+<div class="page" [class.page--public]="isPublicMode">
+  <header class="page__hd">
+    <h1 class="page__title">Asistente virtual PQRS</h1>
+    <p class="page__sub">
+      @if (isPublicMode) {
+        Escriba o adjunte un archivo — sin necesidad de cuenta. Para radicar oficialmente, ingrese al sistema.
+      } @else {
+        Orientación en trámites — Gobernación del Huila
+      }
+    </p>
+  </header>
+
+  <div class="chat-layout">
+    <div class="chat-side">
+      <div class="sigc-card">
+        <div class="sigc-card__hd">
+          <h2 class="sigc-card__title">Acciones rápidas</h2>
+          <p class="sigc-card__desc">Tipo de consulta</p>
+        </div>
+        <div class="sigc-card__bd stack">
+          <button type="button" class="sigc-btn sigc-btn--outline sigc-btn--block" (click)="send('peticion')">Peticiones</button>
+          <button type="button" class="sigc-btn sigc-btn--outline sigc-btn--block" (click)="send('queja')">Quejas</button>
+          <button type="button" class="sigc-btn sigc-btn--outline sigc-btn--block" (click)="send('reclamo')">Reclamos</button>
+          <button type="button" class="sigc-btn sigc-btn--outline sigc-btn--block" (click)="send('Necesito orientación sobre documentos')">Documentos</button>
+        </div>
+      </div>
+
+      @if (isPublicMode) {
+        <div class="sigc-card upload-card">
+          <div class="sigc-card__hd">
+            <h2 class="sigc-card__title">Adjuntar archivo</h2>
+            <p class="sigc-card__desc">PDF, imágenes u Office (orientación)</p>
+          </div>
+          <div class="sigc-card__bd">
+            <label class="upload-zone">
+              <input type="file" class="upload-zone__input" accept=".pdf,.jpg,.jpeg,.png,.webp,.gif,.doc,.docx" (change)="onFileSelected($event)" [disabled]="isTyping()" />
+              <span class="upload-zone__icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" x2="12" y1="3" y2="15" />
+                </svg>
+              </span>
+              <span class="upload-zone__text">Elegir archivo para consultar</span>
+              <span class="upload-zone__hint">No se envía al servidor; solo ayuda al asistente a orientarle.</span>
+            </label>
+          </div>
+        </div>
+      }
+
+      <div class="sigc-card" [style.margin-top]="isPublicMode ? '1rem' : '1rem'">
+        <div class="sigc-card__hd">
+          <h2 class="sigc-card__title">Información</h2>
+        </div>
+        <div class="sigc-card__bd muted small">
+          <p>Este asistente orienta sobre PQRS y documentación típica.</p>
+          <p><strong>24/7</strong> (demo local).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sigc-card chat-main">
+      <div class="chat-head">
+        <div class="chat-head__bot">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg>
+        </div>
+        <div>
+          <h2 class="sigc-card__title" style="margin: 0; font-size: 1rem">SIGC Bot</h2>
+          <p class="sigc-card__desc" style="margin: 0">En línea — sistema experto PQRS</p>
+        </div>
+      </div>
+      <div #scrollArea class="chat-scroll">
+        @for (m of messages(); track m.id) {
+          <div class="msg" [class.msg--user]="m.role === 'user'">
+            <div class="msg__avatar" [class.msg__avatar--user]="m.role === 'user'">
+              @if (m.role === 'assistant') {
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /></svg>
+              } @else {
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+              }
+            </div>
+            <div class="msg__body">
+              @if (m.role === 'assistant') {
+                <div class="msg__bubble msg__bubble--bot" [innerHTML]="formatContent(m.content)"></div>
+              } @else {
+                <div class="msg__bubble msg__bubble--user">{{ m.content }}</div>
+              }
+              <p class="msg__time">{{ formatTime(m.timestamp) }}</p>
+            </div>
+          </div>
+        }
+        @if (isTyping()) {
+          <div class="msg">
+            <div class="msg__avatar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /></svg></div>
+            <div class="msg__bubble msg__bubble--bot typing-dots"><span></span><span></span><span></span></div>
+          </div>
+        }
+      </div>
+      <div class="chat-input">
+        <input
+          class="sigc-input"
+          placeholder="Escriba su consulta o pregunte por un documento…"
+          [ngModel]="input()"
+          (ngModelChange)="input.set($event)"
+          (keydown.enter)="$event.preventDefault(); send()"
+          [disabled]="isTyping()"
+        />
+        <button type="button" class="sigc-btn sigc-btn--primary" [disabled]="!input().trim() || isTyping()" (click)="send()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
+        </button>
+      </div>
+      <p class="chat-hint">Enter para enviar</p>
+    </div>
+  </div>
+</div>

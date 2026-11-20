@@ -1,0 +1,17 @@
+# CORS explícito: origen permitido vs. origen no permitido (preflight)
+# 2026-11-19 21:23:05
+
+--- Origin: http://localhost:4300 (permitido)
+HTTP/1.1 200 
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Access-Control-Allow-Origin: http://localhost:4300
+Access-Control-Allow-Methods: GET,POST,OPTIONS
+Access-Control-Allow-Headers: authorization, content-type
+Access-Control-Expose-Headers: X-Correlation-Id
+Access-Control-Max-Age: 3600
+--- Origin: http://evil.example (no permitido)
+HTTP/1.1 403 
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Invalid CORS request

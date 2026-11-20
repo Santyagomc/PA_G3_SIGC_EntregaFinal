@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>G3 SIGC Evidencias de funcionamiento</title>
+<style>
+  @page { size: A4; margin: 15mm; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #111; line-height: 1.4; margin: 0; }
+  .cover { border-bottom: 4px solid #1e6b2e; padding-bottom: 8px; margin-bottom: 10px; }
+  .cover .inst { color: #1e6b2e; font-weight: bold; font-size: 9pt; letter-spacing: .5px; }
+  h1 { font-size: 17pt; margin: 6px 0 2px; }
+  .sub { font-size: 11pt; color: #333; }
+  table.info { border-collapse: collapse; margin-top: 8px; font-size: 10pt; }
+  table.info td { padding: 2px 10px 2px 0; vertical-align: top; }
+  h2 { font-size: 12.5pt; background: #c4d79b; padding: 3px 7px; margin: 14px 0 6px; }
+  h3 { font-size: 11pt; margin: 10px 0 3px; color: #1e6b2e; }
+  p { margin: 4px 0; text-align: justify; }
+  ul, ol { margin: 3px 0 5px 20px; padding: 0; }
+  table.std { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 9.5pt; }
+  table.std th { background: #e3eccf; border: 1px solid #777; padding: 3px 5px; text-align: left; }
+  table.std td { border: 1px solid #999; padding: 3px 5px; vertical-align: top; }
+  .ev { border: 1px solid #b5c98a; border-radius: 4px; padding: 6px 8px; margin: 8px 0; page-break-inside: avoid; }
+  .ev .t { font-weight: bold; }
+  .ev .q { font-size: 9.5pt; background: #f6faef; border-left: 3px solid #8bb34a; padding: 3px 6px; margin-top: 4px; }
+  pre { font-family: Consolas, "Courier New", monospace; font-size: 8.2pt; background: #f6f6f6; border: 1px solid #ccc; padding: 5px; white-space: pre-wrap; word-break: break-word; margin: 4px 0; }
+  img { max-width: 100%; border: 1px solid #aaa; }
+  code { font-family: Consolas, monospace; font-size: 9pt; background: #f2f2f2; padding: 0 2px; }
+  .ok { color: #1b5e20; font-weight: bold; } .par { color: #8a5a00; font-weight: bold; } .pen { color: #b71c1c; font-weight: bold; }
+  .diagram { font-family: Consolas, monospace; font-size: 8.2pt; white-space: pre; background: #fbfbfb; border: 1px solid #bbb; padding: 6px; line-height: 1.25; }
+  .pb { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="inst">FUNDACIÓN ESCUELA TECNOLÓGICA DE NEIVA JESÚS OVIEDO PÉREZ · INGENIERÍA DE SOFTWARE</div>
+  <h1>SIGC — Sistema Inteligente de Gestión de PQR</h1>
+  <div class="sub">Actividad 3.1 · Evidencias del funcionamiento del proyecto</div>
+  <table class="info">
+    <tr><td><b>Proyecto:</b></td><td>SIGC: Sistema Inteligente de Gestión de PQR con arquitectura distribuida orientada a eventos (API REST, Kafka y Gateway GraphQL)</td></tr>
+    <tr><td><b>Integrantes:</b></td><td>Santiago Murcia Cangrejo · Hallys Andrea Escobar Paloma (Ingeniería de Software, 9.º semestre, jornada día)</td></tr>
+    <tr><td><b>Asignatura:</b></td><td>Programación Avanzada — Grupo 3 (Equipo 4)</td></tr>
+    <tr><td><b>Docente:</b></td><td>Diego Fernando Vargas Ramírez</td></tr>
+    <tr><td><b>Fecha:</b></td><td>19 de noviembre de 2026 · Versión entregada: <code>v3.0.0</code></td></tr>
+  </table>
+</div>
+
+<h2>1. Arquitectura en ejecución</h2>
+<p>La solución completa se levanta con <code>docker compose up --build -d</code> desde la raíz del proyecto. Servicios: MariaDB (<code>db</code>), Apache Kafka en modo KRaft (<code>kafka</code>), creación de tópicos (<code>kafka-init</code>), Kafka UI (<code>kafka-ui</code>), Redis (<code>redis</code>), API REST Spring Boot (<code>api</code>), gateway GraphQL (<code>gateway</code>) y frontend Angular servido por nginx (<code>frontend</code>).</p>
+<div class="diagram">  Frontend Angular (:4300) ──REST──► API Spring Boot (:8080) ──► MariaDB (:3307)
+        │                               ▲      └─ outbox ─► Kafka audit-events ─► sigc-audit / sigc-notifications
+        └──GraphQL──► Gateway (:8081) ──┘                         └─ errores ─► audit-events.DLT ─► sigc-dlt
+                      JWT+roles · CORS · timeout/retry/circuit breaker · caché Redis (:6379)
+  Kafka UI (:8090) para inspeccionar tópicos, mensajes y grupos de consumidores</div>
+
+<h2>2. Flujo de uso principal</h2>
+<ol>
+  <li><b>Login</b> (mutation <code>login</code> en el gateway o <code>POST /auth/login</code>): se obtiene un JWT con el documento y el rol del usuario.</li>
+  <li><b>Radicar PQR</b> (<code>radicarSolicitud</code> / <code>POST /requests/save</code>): la API valida, aplica el motor de reglas legales, guarda la PQR y registra el evento <code>REQUEST_CREATED</code> en el outbox en la misma transacción.</li>
+  <li><b>Cambiar estado</b> (<code>cambiarEstadoSolicitud</code>, solo ADMIN): se registra <code>REQUEST_STATUS_CHANGED</code>.</li>
+  <li><b>Kafka</b>: el relay publica en <code>audit-events</code>; <code>sigc-audit</code> escribe el historial y <code>sigc-notifications</code> registra la notificación al ciudadano (correo simulado).</li>
+  <li><b>Consulta por GraphQL</b>: <code>solicitud(id){ ... historial{...} }</code> compone la PQR y su historial desde dos endpoints REST, devolviendo solo los campos pedidos.</li>
+  <li><b>Indicadores del tablero</b>: <code>resumenIndicadores</code> (en caché Redis) alimenta las tarjetas del dashboard del frontend.</li>
+  <li><b>Seguridad y resiliencia</b>: se prueba acceso permitido y denegado, y la respuesta del gateway cuando la API no está disponible (circuit breaker).</li>
+</ol>
+
+<h2 class="pb">3. Evidencias</h2>
+<p>Cada evidencia indica qué demuestra. Las salidas completas de los comandos están en <code>evidencias/</code> del repositorio/ZIP.</p>
+<div class="ev"><div class="t">Evidencia 1. Contenedores de la arquitectura (docker compose ps)</div><pre>
+SERVICE    IMAGE                            STATUS                        PORTS
+api        sigc-api:3.0.0                   Up About a minute (healthy)   0.0.0.0:8080-&gt;8080/tcp, [::]:8080-&gt;8080/tcp
+db         mariadb:10.11                    Up 10 minutes (healthy)       0.0.0.0:3307-&gt;3306/tcp, [::]:3307-&gt;3306/tcp
+frontend   sigc-frontend:3.0.0              Up 4 minutes                  0.0.0.0:4300-&gt;80/tcp, [::]:4300-&gt;80/tcp
+gateway    sigc-gateway:1.0.0               Up 4 minutes                  0.0.0.0:8081-&gt;8081/tcp, [::]:8081-&gt;8081/tcp
+kafka      apache/kafka:3.9.1               Up 10 minutes (healthy)       0.0.0.0:9092-&gt;9092/tcp, [::]:9092-&gt;9092/tcp
+kafka-ui   ghcr.io/kafbat/kafka-ui:latest   Up 10 minutes                 0.0.0.0:8090-&gt;8080/tcp, [::]:8090-&gt;8080/tcp
+redis      redis:7.4-alpine                 Up 10 minutes (healthy)       6379/tcp
+</pre><div class="q"><b>Qué demuestra:</b> La arquitectura completa se levanta con Docker Compose: frontend, gateway, api, db, kafka, kafka-ui y redis en ejecución, cada uno con su imagen y puerto.</div></div>
+<div class="ev"><div class="t">Evidencia 2. Salud de la API y del gateway (Actuator)</div><pre>
+GET http://localhost:8080/actuator/health
+{"groups":["liveness","readiness"],"status":"UP"}
+GET http://localhost:8081/actuator/health
+{"components":{"apiRest":{"details":{"circuitBreaker":"CLOSED","tasaFallos":-1.0,"llamadasFallidas":0,"llamadasRechazadas":0},"status":"UP"},"diskSpace":{"details":{"total":1081101176832,"free":972954779648,"threshold":10485760,"p
+</pre><div class="q"><b>Qué demuestra:</b> Observabilidad: Actuator reporta UP en la API y en el gateway; el gateway expone el estado del circuit breaker (CLOSED) y la conexión con Redis.</div></div>
+<div class="ev"><div class="t">Evidencia 3. Seguridad: operación protegida SIN token → UNAUTHORIZED</div><pre>
+&gt; query { resumenIndicadores { totalSolicitudes } }
+{"errors":[{"message":"Debe autenticarse (Authorization: Bearer &lt;token&gt;).","locations":[{"line":1,"column":9}],"path":["resumenIndicadores"],"extensions":{"codigo":"UNAUTHORIZED","correlationId":"demo-final-212255","classifi
+[HTTP 200 � 0.113523s]
+</pre><div class="q"><b>Qué demuestra:</b> Seguridad: una operación protegida sin token es rechazada con un error GraphQL controlado (codigo UNAUTHORIZED) que incluye el correlationId.</div></div>
+<div class="ev"><div class="t">Evidencia 4. Mutation login (pública) del administrador vía gateway</div><pre>
+&gt; mutation { login(documento: "1000000001", password: "Admin.12345") { documento roles mensaje token } }
+{"data":{"login":{"documento":"1000000001","roles":["ADMIN"],"mensaje":"Inicio de sesión exitoso","token":"&lt;token-omitido&gt;"}}}
+[HTTP 200 � 1.410014s]
+</pre><div class="q"><b>Qué demuestra:</b> Autenticación: la mutation pública login delega en POST /auth/login y devuelve el JWT con el rol ADMIN (el token se omite en la evidencia).</div></div>
+<div class="ev"><div class="t">Evidencia 5. Seguridad: credenciales inválidas → UNAUTHORIZED</div><pre>
+&gt; mutation { login(documento: "1000000001", password: "incorrecta") { token } }
+{"errors":[{"message":"Credenciales inválidas.","locations":[{"line":1,"column":12}],"path":["login"],"extensions":{"codigo":"UNAUTHORIZED","correlationId":"demo-final-212255","classification":"UNAUTHORIZED"}}],"data":null}
+[HTTP 200 � 0.283593s]
+</pre><div class="q"><b>Qué demuestra:</b> Autenticación: credenciales inválidas producen UNAUTHORIZED con el mensaje de la API.</div></div>
+<div class="ev"><div class="t">Evidencia 6. Registro de un CONSULTOR (REST) y acceso DENEGADO a una operación ADMIN → FORBIDDEN</div><pre>
+POST http://localhost:8080/auth/register
+{"exito":true,"mensaje":"Usuario registrado exitosamente."}
+[HTTP 201]
+</pre><div class="q"><b>Qué demuestra:</b> Registro público de un ciudadano por REST: siempre se crea con rol CONSULTOR.</div></div>
+<div class="ev"><div class="t">Evidencia 7. Seguridad: CONSULTOR consulta indicadores (ADMIN) → FORBIDDEN; consulta su identidad → OK</div><pre>
+&gt; query { resumenIndicadores { totalSolicitudes } }
+{"errors":[{"message":"No tiene permisos para realizar esta operación.","locations":[{"line":1,"column":9}],"path":["resumenIndicadores"],"extensions":{"codigo":"FORBIDDEN","correlationId":"demo-final-212255","classification":"FO
+[HTTP 200 � 0.044445s]
+&gt; query { me { documento roles } }
+{"data":{"me":{"documento":"921230401","roles":["CONSULTOR"]}}}
+[HTTP 200 � 0.025380s]
+</pre><div class="q"><b>Qué demuestra:</b> Autorización: el CONSULTOR está autenticado (me responde) pero no puede consultar indicadores de ADMIN (FORBIDDEN).</div></div>
+<div class="ev"><div class="t">Evidencia 8. CORS explícito: origen permitido vs. origen no permitido (preflight)</div><pre>
+--- Origin: http://localhost:4300 (permitido)
+HTTP/1.1 200 
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Access-Control-Allow-Origin: http://localhost:4300
+Access-Control-Allow-Methods: GET,POST,OPTIONS
+Access-Control-Allow-Headers: authorization, content-type
+Access-Control-Expose-Headers: X-Correlation-Id
+Access-Control-Max-Age: 3600
+--- Origin: http://evil.example (no permitido)
+HTTP/1.1 403 
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Invalid CORS request
+</pre><div class="q"><b>Qué demuestra:</b> CORS explícito: el origen del frontend (localhost:4300) es aceptado; un origen desconocido recibe 403. CORS no reemplaza la autenticación.</div></div>
+<div class="ev"><div class="t">Evidencia 9. Mutation radicarSolicitud (CONSULTOR) → API REST POST /requests/save → evento REQUEST_CREATED</div><pre>
+&gt; mutation { radicarSolicitud(input: { titulo: "Demora en respuesta de peticion", descripcion: "Radicada via gateway GraphQL para la demostracion final", nombreCompleto: "Ciudadana Demo", correo: "ciudadana.921230401@example.co
+{"data":{"radicarSolicitud":{"id":"4","titulo":"Demora en respuesta de peticion","tipo":"QUEJA","estado":"CREADO","documento":"921230401","creadaEn":"2026-11-19T21:23:06.140997"}}}
+[HTTP 200 � 0.256101s]
+</pre><div class="q"><b>Qué demuestra:</b> Flujo principal: la mutation radicarSolicitud delega en POST /requests/save (multipart con adjunto) y la PQR queda en estado CREADO; la API registra el evento REQUEST_CREATED en el outbox.</div></div>
+<div class="ev"><div class="t">Evidencia 10. Mutation cambiarEstadoSolicitud (ADMIN) → PUT /requests/4/status → evento REQUEST_STATUS_CHANGED</div><pre>
+&gt; mutation { cambiarEstadoSolicitud(id: "4", estado: CERRADO, observaciones: "Respuesta de fondo enviada") { id estado } }
+{"data":{"cambiarEstadoSolicitud":{"id":"4","estado":"CERRADO"}}}
+[HTTP 200 � 0.085323s]
+</pre><div class="q"><b>Qué demuestra:</b> Flujo principal: el ADMIN cambia el estado a CERRADO; la API emite REQUEST_STATUS_CHANGED.</div></div>
+<div class="ev"><div class="t">Evidencia 11. Query solicitud(id) con historial: composición de 2 llamadas REST; el historial lo escribió el consumidor Kafka sigc-audit</div><pre>
+&gt; query { solicitud(id: "4") { id titulo estado tipo correoEnviado historial { estadoAnterior estadoNuevo actor eventId observaciones cambiadoEn } } }
+{"data":{"solicitud":{"id":"4","titulo":"Demora en respuesta de peticion","estado":"CERRADO","tipo":"QUEJA","correoEnviado":true,"historial":[{"estadoAnterior":null,"estadoNuevo":"CREADO","actor":"921230401","eventId":"07669372-de
+[HTTP 200 � 0.103932s]
+</pre><div class="q"><b>Qué demuestra:</b> Composición en el gateway: una sola query combina el detalle (GET /requests/findById) con el historial (GET /requests/{id}/history) escrito por el consumidor Kafka sigc-audit; correoEnviado=true lo marcó sigc-notifications.</div></div>
+<div class="ev"><div class="t">Evidencia 12. Query solicitudes (ADMIN) con filtro y paginación; el cliente pide solo los campos que necesita</div><pre>
+&gt; query { solicitudes(filtro: { estado: CERRADO }, page: 0, size: 3) { totalElementos totalPaginas contenido { id titulo estado } } }
+{"data":{"solicitudes":{"totalElementos":3,"totalPaginas":1,"contenido":[{"id":"4","titulo":"Demora en respuesta de peticion","estado":"CERRADO"},{"id":"3","titulo":"Demora en respuesta de peticion","estado":"CERRADO"},{"id":"1","
+[HTTP 200 � 0.052917s]
+</pre><div class="q"><b>Qué demuestra:</b> Query con filtro y paginación: el cliente recibe solo los campos solicitados.</div></div>
+<div class="ev"><div class="t">Evidencia 13. Query misSolicitudes (CONSULTOR)</div><pre>
+&gt; query { misSolicitudes { totalElementos contenido { id titulo estado } } }
+{"data":{"misSolicitudes":{"totalElementos":1,"contenido":[{"id":"4","titulo":"Demora en respuesta de peticion","estado":"CERRADO"}]}}}
+[HTTP 200 � 0.068118s]
+</pre><div class="q"><b>Qué demuestra:</b> El ciudadano consulta únicamente sus propias PQR.</div></div>
+<div class="ev"><div class="t">Evidencia 14. Mensajes de la PQR 4 en el tópico audit-events con headers (x-correlation-id)</div><pre>
+Partition:1	x-event-id:07669372-de8b-438a-8156-6d5e2d07cdd6,x-event-type:REQUEST_CREATED,x-event-version:1,x-source:sigcapi.requests,x-correlation-id:demo-final-212255	4	{"eventId":"07669372-de8b-438a-8156-6d5e2d07cdd6","eventType
+Partition:1	x-event-id:df2bc651-64dc-4828-9a3e-00c4ffd85ef5,x-event-type:REQUEST_STATUS_CHANGED,x-event-version:1,x-source:sigcapi.requests,x-correlation-id:demo-final-212255	4	{"eventId":"df2bc651-64dc-4828-9a3e-00c4ffd85ef5","ev
+</pre><div class="q"><b>Qué demuestra:</b> Mensajería: los dos eventos de la PQR están en audit-events, en la misma partición (clave = id de la PQR) y con el header x-correlation-id.</div></div>
+<div class="ev"><div class="t">Evidencia 15. Efecto del consumidor sigc-notifications (REST /events/notifications)</div><pre>
+{"data":{"content":[{"body":"Hola Ciudadana Demo,\n\nSe ha actualizado el estado de tu solicitud en SIGCAPI.\n\n------------------------------------------\nNúmero de Radicado: 4\nTítulo: Demora en respuesta de peticion\nTipo: QU
+</pre><div class="q"><b>Qué demuestra:</b> Consumidor sigc-notifications: generó la notificación al ciudadano (modo SIMULATED, sin SMTP real).</div></div>
+<div class="ev"><div class="t">Evidencia 16. Query resumenIndicadores: 1.ª llamada calcula (miss), 2.ª sale de Redis (hit); claves y TTL en Redis</div><pre>
+&gt; query { resumenIndicadores { totalSolicitudes solicitudesAbiertas solicitudesCerradas eventosProcesados notificaciones mensajesDlt generadoEn desactualizado } }
+{"data":{"resumenIndicadores":{"totalSolicitudes":4,"solicitudesAbiertas":1,"solicitudesCerradas":3,"eventosProcesados":14,"notificaciones":7,"mensajesDlt":6,"generadoEn":"2026-11-19T21:23:23.947123958-05:00","desactualizado":fals
+[HTTP 200 � 0.308289s]
+&gt; query { resumenIndicadores { totalSolicitudes generadoEn desactualizado } }
+{"data":{"resumenIndicadores":{"totalSolicitudes":4,"generadoEn":"2026-11-19T21:23:23.947123958-05:00","desactualizado":false}}}
+[HTTP 200 � 0.032670s]
+&gt; query { volumenPorEstado { estado cantidad } }
+{"data":{"volumenPorEstado":[{"estado":"CREADO","cantidad":1},{"estado":"FALTA_DOCUMENTACION","cantidad":0},{"estado":"CERRADO","cantidad":3}]}}
+[HTTP 200 � 0.166184s]
+--- redis-cli KEYS *
+sigc:gateway:resumenIndicadores::global
+sigc:gateway:volumenPorEstado::global
+sigc:gateway:indicadores:ultimo
+TTL sigc:gateway:resumenIndicadores::global = 28 s
+TTL sigc:gateway:volumenPorEstado::global = 28 s
+TTL sigc:gateway:indicadores:ultimo = -1 s
+</pre><div class="q"><b>Qué demuestra:</b> Redis: la primera consulta calcula los indicadores (≈1,3 s) y la segunda sale de la caché (mismo generadoEn, ≈0,05 s); las claves tienen TTL de 30 s.</div></div>
+<div class="ev"><div class="t">Evidencia 17. Trazabilidad: logs de gateway, API, productor y consumidores con correlationId=demo-final-212255</div><pre>
+sigc-api      | 2026-11-19T21:23:07.453-05:00  INFO [correlationId=demo-final-212255 eventId=07669372-de8b-438a-8156-6d5e2d07cdd6 requestId=] 1 --- [sigcapi] [   scheduling-1] c.b.s.messaging.producer.OutboxRelay     : [KAFKA-PROD
+sigc-api      | 2026-11-19T21:23:07.470-05:00  INFO [correlationId=demo-final-212255 eventId=df2bc651-64dc-4828-9a3e-00c4ffd85ef5 requestId=] 1 --- [sigcapi] [   scheduling-1] c.b.s.messaging.producer.OutboxRelay     : [KAFKA-PROD
+sigc-api      | 2026-11-19T21:23:07.572-05:00  INFO [correlationId=demo-final-212255 eventId=07669372-de8b-438a-8156-6d5e2d07cdd6 requestId=4] 1 --- [sigcapi] [nListener-1-C-1] c.b.s.m.consumer.NotificationSender      : [NOTIFICAC
+sigc-api      | 2026-11-19T21:23:07.578-05:00  INFO [correlationId=demo-final-212255 eventId=07669372-de8b-438a-8156-6d5e2d07cdd6 requestId=4] 1 --- [sigcapi] [nListener-1-C-1] c.b.s.m.consumer.NotificationProcessor   : [NOTIFICAC
+sigc-api      | 2026-11-19T21:23:07.579-05:00  INFO [correlationId=demo-final-212255 eventId=07669372-de8b-438a-8156-6d5e2d07cdd6 requestId=4] 1 --- [sigcapi] [yListener-1-C-1] c.b.s.m.consumer.AuditEventProcessor     : [AUDITORIA
+sigc-api      | 2026-11-19T21:23:07.612-05:00  INFO [correlationId=demo-final-212255 eventId=df2bc651-64dc-4828-9a3e-00c4ffd85ef5 requestId=4] 1 --- [sigcapi] [nListener-1-C-1] c.b.s.m.consumer.NotificationSender      : [NOTIFICAC
+sigc-api      | 2026-11-19T21:23:07.619-05:00  INFO [correlationId=demo-final-212255 eventId=df2bc651-64dc-4828-9a3e-00c4ffd85ef5 requestId=4] 1 --- [sigcapi] [nListener-1-C-1] c.b.s.m.consumer.NotificationProcessor   : [NOTIFICAC
+sigc-api      | 2026-11-19T21:23:07.621-05:00  INFO [correlationId=demo-final-212255 eventId=df2bc651-64dc-4828-9a3e-00c4ffd85ef5 requestId=4] 1 --- [sigcapi] [yListener-1-C-1] c.b.s.m.consumer.AuditEventProcessor     : [AUDITORIA
+sigc-gateway  | 2026-11-19T21:23:01.436-05:00  WARN [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-7] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=query:resumenIndicadores resultado=ERROR c
+sigc-gateway  | 2026-11-19T21:23:03.062-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-9] com.sigc.gateway.client.ApiClient        : [API-CLIENT] POST /auth/login -&gt; 200 (1375 ms)
+sigc-gateway  | 2026-11-19T21:23:03.073-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-9] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=mutation:login resultado=OK duracionMs=139
+sigc-gateway  | 2026-11-19T21:23:03.533-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [io-8081-exec-10] com.sigc.gateway.client.ApiClient        : [API-CLIENT] POST /auth/login -&gt; 200 (252 ms)
+sigc-gateway  | 2026-11-19T21:23:03.534-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [io-8081-exec-10] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=mutation:login resultado=OK duracionMs=256
+sigc-gateway  | 2026-11-19T21:23:04.007-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-3] com.sigc.gateway.client.ApiClient        : [API-CLIENT] POST /auth/login -&gt; 401 (263 ms)
+sigc-gateway  | 2026-11-19T21:23:04.011-05:00  WARN [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-3] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=mutation:login resultado=ERROR codigos=UNA
+sigc-gateway  | 2026-11-19T21:23:04.950-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-4] com.sigc.gateway.client.ApiClient        : [API-CLIENT] POST /auth/login -&gt; 200 (255 ms)
+sigc-gateway  | 2026-11-19T21:23:04.952-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-4] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=mutation:login resultado=OK duracionMs=261
+sigc-gateway  | 2026-11-19T21:23:05.254-05:00  WARN [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-7] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=query:resumenIndicadores resultado=ERROR c
+sigc-gateway  | 2026-11-19T21:23:05.435-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-9] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=query:me resultado=OK duracionMs=5
+sigc-gateway  | 2026-11-19T21:23:06.202-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-4] com.sigc.gateway.client.ApiClient        : [API-CLIENT] POST /requests/save -&gt; 201 (207 ms)
+sigc-gateway  | 2026-11-19T21:23:06.205-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-4] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=mutation:radicarSolicitud resultado=OK dur
+sigc-gateway  | 2026-11-19T21:23:06.549-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-7] com.sigc.gateway.client.ApiClient        : [API-CLIENT] PUT /requests/4/status -&gt; 200 (64 ms)
+sigc-gateway  | 2026-11-19T21:23:06.550-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-7] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=mutation:cambiarEstadoSolicitud resultado=
+sigc-gateway  | 2026-11-19T21:23:11.844-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-9] com.sigc.gateway.client.ApiClient        : [API-CLIENT] GET /requests/findById/4 -&gt; 200 (28 ms)
+sigc-gateway  | 2026-11-19T21:23:11.894-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-9] com.sigc.gateway.client.ApiClient        : [API-CLIENT] GET /requests/4/history -&gt; 200 (47 ms)
+sigc-gateway  | 2026-11-19T21:23:11.897-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-9] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=query:solicitud resultado=OK duracionMs=87
+sigc-gateway  | 2026-11-19T21:23:12.135-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [io-8081-exec-10] com.sigc.gateway.client.ApiClient        : [API-CLIENT] GET /requests/all -&gt; 200 (25 ms)
+sigc-gateway  | 2026-11-19T21:23:12.139-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [io-8081-exec-10] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=query:solicitudes resultado=OK duracionMs=
+sigc-gateway  | 2026-11-19T21:23:12.399-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-3] com.sigc.gateway.client.ApiClient        : [API-CLIENT] GET /requests/my -&gt; 200 (39 ms)
+sigc-gateway  | 2026-11-19T21:23:12.403-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-3] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=query:misSolicitudes resultado=OK duracion
+sigc-gateway  | 2026-11-19T21:23:23.803-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-4] com.sigc.gateway.client.ApiClient        : [API-CLIENT] GET /requests/all -&gt; 200 (46 ms)
+sigc-gateway  | 2026-11-19T21:23:23.843-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-4] com.sigc.gateway.client.ApiClient        : [API-CLIENT] GET /requests/all -&gt; 200 (38 ms)
+sigc-gateway  | 2026-11-19T21:23:23.886-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-4] com.sigc.gateway.client.ApiClient        : [API-CLIENT] GET /requests/all -&gt; 200 (42 ms)
+sigc-gateway  | 2026-11-19T21:23:23.945-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-4] com.sigc.gateway.client.ApiClient        : [API-CLIENT] GET /events/summary -&gt; 200 (58 ms)
+sigc-gateway  | 2026-11-19T21:23:23.981-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-4] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=query:resumenIndicadores resultado=OK dura
+sigc-gateway  | 2026-11-19T21:23:24.209-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-7] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=query:resumenIndicadores resultado=OK dura
+sigc-gateway  | 2026-11-19T21:23:24.461-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-9] com.sigc.gateway.client.ApiClient        : [API-CLIENT] GET /requests/all -&gt; 200 (35 ms)
+sigc-gateway  | 2026-11-19T21:23:24.495-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-9] com.sigc.gateway.client.ApiClient        : [API-CLIENT] GET /requests/all -&gt; 200 (34 ms)
+sigc-gateway  | 2026-11-19T21:23:24.529-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-9] com.sigc.gateway.client.ApiClient        : [API-CLIENT] GET /requests/all -&gt; 200 (33 ms)
+sigc-gateway  | 2026-11-19T21:23:24.541-05:00  INFO [correlationId=demo-final-212255] 1 --- [sigc-gateway] [nio-8081-exec-9] c.s.g.o.GraphQlLoggingInterceptor        : [GATEWAY] operacion=query:volumenPorEstado resultado=OK duraci
+</pre><div class="q"><b>Qué demuestra:</b> Trazabilidad distribuida: el mismo correlationId aparece en gateway, API, productor (outbox/relay) y consumidores de auditoría y notificaciones.</div></div>
+<div class="ev"><div class="t">Evidencia 18. Resiliencia: API REST detenida → timeout/retry/circuit breaker en el gateway</div><pre>
+--- intento 1
+{"errors":[{"message":"El servicio de solicitudes no respondió a tiempo. Intente nuevamente.","locations":[{"line":1,"column":9}],"path":["solicitudes"],"extensions":{"codigo":"UNAVAILABLE","correlationId":"resiliencia-1","classi
+[HTTP 200 � 7.021099s]
+--- intento 2
+{"errors":[{"message":"El servicio de solicitudes no está disponible temporalmente. Intente en unos segundos.","locations":[{"line":1,"column":9}],"path":["solicitudes"],"extensions":{"codigo":"UNAVAILABLE","correlationId":"resil
+[HTTP 200 � 0.952393s]
+--- intento 3
+{"errors":[{"message":"El servicio de solicitudes no está disponible temporalmente. Intente en unos segundos.","locations":[{"line":1,"column":9}],"path":["solicitudes"],"extensions":{"codigo":"UNAVAILABLE","correlationId":"resil
+[HTTP 200 � 0.038970s]
+--- intento 4
+{"errors":[{"message":"El servicio de solicitudes no está disponible temporalmente. Intente en unos segundos.","locations":[{"line":1,"column":9}],"path":["solicitudes"],"extensions":{"codigo":"UNAVAILABLE","correlationId":"resil
+[HTTP 200 � 0.022281s]
+--- intento 5
+{"errors":[{"message":"El servicio de solicitudes no está disponible temporalmente. Intente en unos segundos.","locations":[{"line":1,"column":9}],"path":["solicitudes"],"extensions":{"codigo":"UNAVAILABLE","correlationId":"resil
+[HTTP 200 � 0.038775s]
+--- intento 6
+{"errors":[{"message":"El servicio de solicitudes no está disponible temporalmente. Intente en unos segundos.","locations":[{"line":1,"column":9}],"path":["solicitudes"],"extensions":{"codigo":"UNAVAILABLE","correlationId":"resil
+[HTTP 200 � 0.031584s]
+--- Indicadores con la API caída (se expira la caché de 30 s para forzar el respaldo): último valor conocido desde Redis
+&gt; query { resumenIndicadores { totalSolicitudes generadoEn desactualizado } }
+{"data":{"resumenIndicadores":{"totalSolicitudes":4,"generadoEn":"2026-11-19T21:23:23.947123958-05:00","desactualizado":true}}}
+[HTTP 200 � 0.446941s]
+--- Estado del gateway
+{"components":{"apiRest":{"details":{"circuitBreaker":"OPEN","tasaFallos":50.0,"llamadasFallidas":5,"llamadasRechazadas":6},"status":"OUT_OF_SERVICE"},"diskSpace":{"details":{"total":1081101176832,"free":972954767360,"threshold":1
+--- Logs [RESILIENCIA] del gateway
+sigc-gateway  | 2026-11-19T21:23:32.183-05:00  WARN [correlationId=resiliencia-1] 1 --- [sigc-gateway] [io-8081-exec-10] c.sigc.gateway.config.ResilienceConfig   : [RESILIENCIA] reintento 1 de la consulta a la API: ApiUn
+sigc-gateway  | 2026-11-19T21:23:36.501-05:00  WARN [correlationId=resiliencia-1] 1 --- [sigc-gateway] [io-8081-exec-10] c.sigc.gateway.config.ResilienceConfig   : [RESILIENCIA] reintento 2 de la consulta a la API: ApiUn
+sigc-gateway  | 2026-11-19T21:23:37.400-05:00  WARN [correlationId=resiliencia-2] 1 --- [sigc-gateway] [nio-8081-exec-3] c.sigc.gateway.config.ResilienceConfig   : [RESILIENCIA] reintento 1 de la consulta a la API: ApiUn
+sigc-gateway  | 2026-11-19T21:23:37.708-05:00  WARN [correlationId=resiliencia-2] 1 --- [sigc-gateway] [nio-8081-exec-3] c.sigc.gateway.config.ResilienceConfig   : [RESILIENCIA] circuit breaker api-rest: State transition
+sigc-gateway  | 2026-11-19T21:23:37.709-05:00  WARN [correlationId=resiliencia-2] 1 --- [sigc-gateway] [nio-8081-exec-3] c.sigc.gateway.config.ResilienceConfig   : [RESILIENCIA] reintento 2 de la consulta a la API: ApiUn
+sigc-gateway  | 2026-11-19T21:23:38.311-05:00  WARN [correlationId=resiliencia-2] 1 --- [sigc-gateway] [nio-8081-exec-3] com.sigc.gateway.client.ApiClient        : [RESILIENCIA] circuit breaker ABIERTO: se evita llamar G
+sigc-gateway  | 2026-11-19T21:23:38.544-05:00  WARN [correlationId=resiliencia-3] 1 --- [sigc-gateway] [nio-8081-exec-4] com.sigc.gateway.client.ApiClient        : [RESILIENCIA] circuit breaker ABIERTO: se evita llamar G
+sigc-gateway  | 2026-11-19T21:23:38.762-05:00  WARN [correlationId=resiliencia-4] 1 --- [sigc-gateway] [nio-8081-exec-7] com.sigc.gateway.client.ApiClient        : [RESILIENCIA] circuit breaker ABIERTO: se evita llamar G
+sigc-gateway  | 2026-11-19T21:23:38.982-05:00  WARN [correlationId=resiliencia-5] 1 --- [sigc-gateway] [nio-8081-exec-9] com.sigc.gateway.client.ApiClient        : [RESILIENCIA] circuit breaker ABIERTO: se evita llamar G
+sigc-gateway  | 2026-11-19T21:23:39.197-05:00  WARN [correlationId=resiliencia-6] 1 --- [sigc-gateway] [io-8081-exec-10] com.sigc.gateway.client.ApiClient        : [RESILIENCIA] circuit breaker ABIERTO: se evita llamar G
+sigc-gateway  | 2026-11-19T21:23:39.844-05:00  WARN [correlationId=resiliencia-cache] 1 --- [sigc-gateway] [nio-8081-exec-3] com.sigc.gateway.client.ApiClient        : [RESILIENCIA] circuit breaker ABIERTO: se evita llam
+sigc-gateway  | 2026-11-19T21:23:40.248-05:00  WARN [correlationId=resiliencia-cache] 1 --- [sigc-gateway] [nio-8081-exec-3] c.s.gateway.graphql.IndicadoresService   : [RESILIENCIA] API no disponible: se responde el últ
+</pre><div class="q"><b>Qué demuestra:</b> Resiliencia con la API detenida: timeout y reintentos (1.er intento ≈7 s), luego el circuit breaker se abre y responde UNAVAILABLE en milisegundos sin llamar a la API; los indicadores se sirven desde Redis con desactualizado=true.</div></div>
+<div class="ev"><div class="t">Evidencia 19. Recuperación: se inicia la API y el gateway vuelve a responder (circuit breaker HALF_OPEN → CLOSED)</div><pre>
+API disponible de nuevo
+&gt; query { solicitudes(page: 0, size: 1) { totalElementos } }
+{"data":{"solicitudes":{"totalElementos":4}}}
+[HTTP 200 � 0.468273s]
+&gt; query { resumenIndicadores { totalSolicitudes desactualizado } }
+{"data":{"resumenIndicadores":{"totalSolicitudes":4,"desactualizado":false}}}
+[HTTP 200 � 0.322729s]
+</pre><div class="q"><b>Qué demuestra:</b> Recuperación: al reiniciar la API el circuito pasa a HALF_OPEN y luego CLOSED; las consultas vuelven a funcionar y los indicadores dejan de estar desactualizados.</div></div>
+
+
+<h3>Capturas de pantalla del sistema en ejecución</h3>
+<style>.cap{page-break-inside:avoid;margin:6px 0 10px}.cap img{width:100%;border:1px solid #999}.cap .pie{font-size:8.5pt;color:#333;margin-top:2px}</style>
+<div class="cap"><img src="../evidencias/capturas/02_frontend_dashboard_gateway.png"><div class="pie"><b>Captura 1.</b> Dashboard del administrador en el frontend (http://localhost:4300). Las tarjetas y la línea "Indicadores vía Gateway GraphQL" provienen de la query <code>resumenIndicadores</code> del gateway (caché Redis). Demuestra la integración frontend → gateway → API.</div></div>
+<div class="cap"><img src="../evidencias/capturas/01_frontend_login.png"><div class="pie"><b>Captura 2.</b> Pantalla de inicio de sesión del frontend servido por nginx en Docker.</div></div>
+<div class="cap"><img src="../evidencias/capturas/05_kafka_ui_topics.png"><div class="pie"><b>Captura 3.</b> Kafka UI: tópicos <code>audit-events</code> (3 particiones) y <code>audit-events.DLT</code> creados por <code>kafka-init</code>.</div></div>
+<div class="cap"><img src="../evidencias/capturas/06_kafka_ui_consumers.png"><div class="pie"><b>Captura 4.</b> Grupos de consumidores <code>sigc-audit</code>, <code>sigc-notifications</code> y <code>sigc-dlt</code> en estado STABLE con lag 0 (todos los eventos procesados).</div></div>
+<div class="cap"><img src="../evidencias/capturas/04_graphiql.png"><div class="pie"><b>Captura 5.</b> GraphiQL disponible en http://localhost:8081/graphiql para explorar el schema del gateway.</div></div>
+<p style="font-size:9pt"><b>Video:</b> no se grabó video; las evidencias son salidas reales del script <code>scripts/demo-final.sh</code> (ejecutado el 19/11/2026) y capturas tomadas del sistema en ejecución. Cualquier persona puede reproducirlas con <code>docker compose up --build -d</code> y <code>bash scripts/demo-final.sh</code>.</p>
+
+<h2>4. Funciones logradas, parciales y pendientes</h2>
+<table class="std">
+  <tr><th style="width:36%">Función</th><th style="width:14%">Estado</th><th>Limitación</th></tr>
+  <tr><td>Registro, login JWT y roles (ADMIN / CONSULTOR)</td><td class="ok">Lograda</td><td>Sin refresh token ni rotación de la clave HMAC.</td></tr>
+  <tr><td>Radicación de PQR con documentos y motor de reglas legales</td><td class="ok">Lograda</td><td>Reglas cargadas en base de datos; datos de prueba ficticios.</td></tr>
+  <tr><td>Consulta, filtros, paginación y cambio de estado</td><td class="ok">Lograda</td><td>—</td></tr>
+  <tr><td>Kafka: outbox, auditoría, notificación, idempotencia y DLT</td><td class="ok">Lograda</td><td>Un solo broker (RF=1); relay del outbox para una sola instancia de la API.</td></tr>
+  <tr><td>Gateway GraphQL: queries, mutations, resolvers y composición</td><td class="ok">Lograda</td><td>El gateway delega en la API; no tiene datos propios.</td></tr>
+  <tr><td>Seguridad en gateway y API: JWT, @PreAuthorize, CORS explícito, secretos en .env</td><td class="ok">Lograda</td><td>Clave compartida entre gateway y API.</td></tr>
+  <tr><td>Timeout, retry y circuit breaker</td><td class="ok">Lograda</td><td>Solo en las llamadas gateway → API; retry solo en consultas.</td></tr>
+  <tr><td>Caché de indicadores en Redis</td><td class="ok">Lograda</td><td>Los indicadores pueden tener la antigüedad del TTL.</td></tr>
+  <tr><td>Correlation ID gateway → API → Kafka → consumidores</td><td class="ok">Lograda</td><td>Correlación por logs; sin OpenTelemetry.</td></tr>
+  <tr><td>Docker Compose con todos los servicios</td><td class="ok">Lograda</td><td>Ejecución local.</td></tr>
+  <tr><td>Frontend consumiendo el gateway</td><td class="par">Parcial</td><td>Solo los indicadores del dashboard usan GraphQL; el resto usa REST.</td></tr>
+  <tr><td>Envío real de correo</td><td class="par">Parcial</td><td>Modo simulado por defecto; requiere credenciales SMTP.</td></tr>
+  <tr><td>Métricas</td><td class="par">Parcial</td><td>Actuator; sin Prometheus/Grafana.</td></tr>
+  <tr><td>SSE / WebSocket</td><td class="pen">Pendiente (decisión)</td><td>No se requiere tiempo real en el caso de uso.</td></tr>
+  <tr><td><code>GET /documents/my</code></td><td class="pen">Pendiente</td><td>Definido en el contrato como propuesta.</td></tr>
+</table>
+
+</body>
+</html>

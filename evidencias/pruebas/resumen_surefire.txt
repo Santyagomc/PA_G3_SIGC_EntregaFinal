@@ -1,0 +1,27 @@
+== api.documental
+Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 26.88 s -- in com.backend.sigcapi.ApiIntegrationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.190 s -- in com.backend.sigcapi.SigcapiApplicationTests
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.160 s -- in com.backend.sigcapi.config.CorrelationIdFilterTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.099 s -- in com.backend.sigcapi.dto.DtoValidationTest
+Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.182 s -- in com.backend.sigcapi.enums.OperatorTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.052 s -- in com.backend.sigcapi.exceptions.GlobalExceptionHandlerTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.481 s -- in com.backend.sigcapi.messaging.AuditEventProcessorTest
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.175 s -- in com.backend.sigcapi.messaging.EventCodecTest
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.642 s -- in com.backend.sigcapi.messaging.EventConsumersTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 16.99 s -- in com.backend.sigcapi.messaging.KafkaEventFlowIntegrationTest
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.295 s -- in com.backend.sigcapi.messaging.NotificationProcessorTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.272 s -- in com.backend.sigcapi.messaging.OutboxRelayTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.037 s -- in com.backend.sigcapi.messaging.OutboxRequestEventPublisherTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.082 s -- in com.backend.sigcapi.security.JwtServiceTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.284 s -- in com.backend.sigcapi.services.DocumentServiceImplTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.027 s -- in com.backend.sigcapi.services.ExpertEngineServiceImplTest
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.385 s -- in com.backend.sigcapi.services.RequestServiceImplTest
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.354 s -- in com.backend.sigcapi.services.RuleServiceImplTest
+Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.174 s -- in com.backend.sigcapi.services.UserServiceImplTest
+== gateway
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 13.08 s -- in com.sigc.gateway.GatewaySecurityGraphQlTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in com.sigc.gateway.SchemaContractTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.455 s -- in com.sigc.gateway.client.ApiClientResilienceTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.250 s -- in com.sigc.gateway.graphql.ResolversUnitTest
+api.documental: total=136 fallos=0 errores=0 omitidas=0
+gateway: total=24 fallos=0 errores=0 omitidas=0

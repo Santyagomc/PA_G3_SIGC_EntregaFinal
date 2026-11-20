@@ -1,0 +1,96 @@
+<div class="auth-page">
+  <div class="auth-page__wrap">
+    <div class="auth-page__brand">
+      <div class="auth-page__logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+      </div>
+      <h1 class="auth-page__title">SIGC PQRS</h1>
+      <p class="auth-page__desc">
+        Sistema de Gestión de Peticiones, Quejas, Reclamos y Sugerencias
+      </p>
+    </div>
+
+    <div class="sigc-card auth-card">
+      <div class="sigc-card__hd">
+        <h2 class="sigc-card__title" style="text-align: center">Crear cuenta</h2>
+        <p class="sigc-card__desc" style="text-align: center">
+          Registro como ciudadano (contraseña: mayúscula, minúscula y número).
+        </p>
+      </div>
+      <div class="sigc-card__bd">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          @if (error()) {
+            <div class="auth-alert" role="alert">{{ error() }}</div>
+          }
+
+          <div class="sigc-field">
+            <label class="sigc-label" for="fn">Nombre completo</label>
+            <input id="fn" class="sigc-input" formControlName="full_name" placeholder="Mínimo 10 caracteres" [disabled]="loading()" />
+            @if (fieldInvalid('full_name')) {
+              <small class="auth-help auth-help--error">{{ fieldMessage('full_name') }}</small>
+            }
+          </div>
+          <div class="sigc-field">
+            <label class="sigc-label" for="doc">Número de documento</label>
+            <input id="doc" class="sigc-input" formControlName="document" [disabled]="loading()" />
+            @if (fieldInvalid('document')) {
+              <small class="auth-help auth-help--error">{{ fieldMessage('document') }}</small>
+            }
+          </div>
+          <div class="sigc-field">
+            <label class="sigc-label" for="em">Correo electrónico</label>
+            <input id="em" class="sigc-input" type="email" formControlName="email" [disabled]="loading()" />
+            @if (fieldInvalid('email')) {
+              <small class="auth-help auth-help--error">{{ fieldMessage('email') }}</small>
+            }
+          </div>
+          <div class="sigc-field">
+            <label class="sigc-label" for="pw">Contraseña</label>
+            <div class="auth-password">
+              <input
+                id="pw"
+                class="sigc-input"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                [disabled]="loading()"
+              />
+              <button type="button" class="auth-password__toggle" (click)="togglePassword()" tabindex="-1" aria-label="Mostrar">
+                @if (showPassword()) {
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" x2="23" y1="1" y2="23" /></svg>
+                } @else {
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                }
+              </button>
+            </div>
+            @if (fieldInvalid('password')) {
+              <small class="auth-help auth-help--error">{{ fieldMessage('password') }}</small>
+            }
+          </div>
+          <div class="sigc-field">
+            <label class="sigc-label" for="cp">Confirmar contraseña</label>
+            <input id="cp" class="sigc-input" type="password" formControlName="confirmPassword" [disabled]="loading()" />
+            @if (fieldInvalid('confirmPassword') || form.errors?.['mismatch']) {
+              <small class="auth-help auth-help--error">{{ form.errors?.['mismatch'] ? 'Las contraseñas no coinciden.' : fieldMessage('confirmPassword') }}</small>
+            }
+          </div>
+
+          <button type="submit" class="sigc-btn sigc-btn--primary sigc-btn--block" [disabled]="loading()">
+            @if (loading()) {
+              <span class="sigc-spinner"></span>
+              Registrando…
+            } @else {
+              Crear cuenta
+            }
+          </button>
+
+          <p class="auth-footer">
+            <a routerLink="/login">← Volver al inicio de sesión</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

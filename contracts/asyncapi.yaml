@@ -1,0 +1,146 @@
+asyncapi: 3.0.0
+info:
+  title: SIGC - Eventos de PQR
+  version: 2.0.0
+  description: |
+    Contrato de mensajería asíncrona de SIGC (Entrega 2, segundo periodo).
+    El servicio de solicitudes publica eventos de dominio mediante el patrón Transactional Outbox;
+    tres grupos de consumidores los procesan de forma independiente. Entrega "al menos una vez":
+    los consumidores son idempotentes por `eventId`.
+servers:
+  local:
+    host: localhost:9092
+    protocol: kafka
+    description: Broker KRaft del docker-compose (listener EXTERNAL). Desde contenedores, kafka:29092.
+defaultContentType: application/json
+
+channels:
+  auditEvents:
+    address: audit-events
+    description: |
+      Eventos del ciclo de vida de las PQR. 3 particiones, retención 7 días.
+      Clave del mensaje = requestId (orden garantizado por PQR).
+    messages:
+      requestCreated:
+        $ref: '#/components/messages/RequestCreated'
+      requestStatusChanged:
+        $ref: '#/components/messages/RequestStatusChanged'
+    bindings:
+      kafka:
+        topic: audit-events
+        partitions: 3
+        replicas: 1
+        topicConfiguration:
+          cleanup.policy: [delete]
+          retention.ms: 604800000
+  auditEventsDlt:
+    address: audit-events.DLT
+    description: |
+      Dead Letter Topic. Mensaje original sin modificar + headers de Spring Kafka con la causa
+      (kafka_dlt-exception-fqcn, kafka_dlt-exception-message, kafka_dlt-original-topic,
+      kafka_dlt-original-partition, kafka_dlt-original-offset, kafka_dlt-original-consumer-group).
+      Retención 30 días.
+    messages:
+      failedMessage:
+        $ref: '#/components/messages/FailedMessage'
+    bindings:
+      kafka:
+        topic: audit-events.DLT
+        partitions: 3
+        replicas: 1
+
+operations:
+  publishRequestEvents:
+    action: send
+    channel:
+      $ref: '#/channels/auditEvents'
+    summary: OutboxRelay publica los eventos confirmados en outbox_events (acks=all, productor idempotente).
+    messages:
+      - $ref: '#/channels/auditEvents/messages/requestCreated'
+      - $ref: '#/channels/auditEvents/messages/requestStatusChanged'
+  consumeForAudit:
+    action: receive
+    channel:
+      $ref: '#/channels/auditEvents'
+    summary: Grupo sigc-audit (AuditEventConsumer) — escribe request_history.
+    bindings:
+      kafka:
+        groupId:
+          type: string
+          enum: [sigc-audit]
+  consumeForNotifications:
+    action: receive
+    channel:
+      $ref: '#/channels/auditEvents'
+    summary: Grupo sigc-notifications (NotificationEventConsumer) — acuse de radicación y aviso de cambio de estado.
+    bindings:
+      kafka:
+        groupId:
+          type: string
+          enum: [sigc-notifications]
+  publishDeadLetters:
+    action: send
+    channel:
+      $ref: '#/channels/auditEventsDlt'
+    summary: DeadLetterPublishingRecoverer — mensajes no reintentables o con reintentos agotados (1s, 2s, 4s).
+  consumeDeadLetters:
+    action: receive
+    channel:
+      $ref: '#/channels/auditEventsDlt'
+    summary: Grupo sigc-dlt (DeadLetterConsumer) — persiste failed_events.
+    bindings:
+      kafka:
+        groupId:
+          type: string
+          enum: [sigc-dlt]
+
+components:
+  messages:
+    RequestCreated:
+      name: REQUEST_CREATED
+      title: PQR radicada
+      headers:
+        $ref: '#/components/schemas/EventHeaders'
+      payload:
+        $ref: './events/request-event.schema.json'
+      bindings:
+        kafka:
+          key:
+            type: string
+            description: requestId
+    RequestStatusChanged:
+      name: REQUEST_STATUS_CHANGED
+      title: Cambio de estado de una PQR
+      headers:
+        $ref: '#/components/schemas/EventHeaders'
+      payload:
+        $ref: './events/request-event.schema.json'
+      bindings:
+        kafka:
+          key:
+            type: string
+            description: requestId
+    FailedMessage:
+      name: DEAD_LETTER
+      title: Mensaje no procesable
+      payload:
+        type: string
+        description: Valor original del mensaje (puede no ser JSON válido).
+  schemas:
+    EventHeaders:
+      type: object
+      properties:
+        x-event-id:
+          type: string
+          format: uuid
+        x-event-type:
+          type: string
+          enum: [REQUEST_CREATED, REQUEST_STATUS_CHANGED]
+        x-event-version:
+          type: string
+          enum: ['1']
+        x-source:
+          type: string
+        x-simulated:
+          type: string
+          description: 'true solo en mensajes del simulador (/events/simulate/**)'

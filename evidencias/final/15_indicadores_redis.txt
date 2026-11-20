@@ -1,0 +1,22 @@
+# Query resumenIndicadores: 1.Âª llamada calcula (miss), 2.Âª sale de Redis (hit); claves y TTL en Redis
+# 2026-11-19 21:23:23
+
+> query { resumenIndicadores { totalSolicitudes solicitudesAbiertas solicitudesCerradas eventosProcesados notificaciones mensajesDlt generadoEn desactualizado } }
+{"data":{"resumenIndicadores":{"totalSolicitudes":4,"solicitudesAbiertas":1,"solicitudesCerradas":3,"eventosProcesados":14,"notificaciones":7,"mensajesDlt":6,"generadoEn":"2026-11-19T21:23:23.947123958-05:00","desactualizado":false}}}
+[HTTP 200 · 0.308289s]
+
+> query { resumenIndicadores { totalSolicitudes generadoEn desactualizado } }
+{"data":{"resumenIndicadores":{"totalSolicitudes":4,"generadoEn":"2026-11-19T21:23:23.947123958-05:00","desactualizado":false}}}
+[HTTP 200 · 0.032670s]
+
+> query { volumenPorEstado { estado cantidad } }
+{"data":{"volumenPorEstado":[{"estado":"CREADO","cantidad":1},{"estado":"FALTA_DOCUMENTACION","cantidad":0},{"estado":"CERRADO","cantidad":3}]}}
+[HTTP 200 · 0.166184s]
+
+--- redis-cli KEYS *
+sigc:gateway:resumenIndicadores::global
+sigc:gateway:volumenPorEstado::global
+sigc:gateway:indicadores:ultimo
+TTL sigc:gateway:resumenIndicadores::global = 28 s
+TTL sigc:gateway:volumenPorEstado::global = 28 s
+TTL sigc:gateway:indicadores:ultimo = -1 s

@@ -1,0 +1,121 @@
+<div class="page">
+  <header class="page__row">
+    <div>
+      <h1 class="page__title">Gestión de usuarios</h1>
+      <p class="page__sub">Solo administradores (datos demo o sincronizados desde el API)</p>
+    </div>
+    <button type="button" class="sigc-btn sigc-btn--primary" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+      Nuevo usuario
+    </button>
+  </header>
+
+  <div class="stats-mini">
+    <div class="sigc-card">
+      <div class="sigc-card__bd stat-mini">
+        <p class="stat-mini__l">Total</p>
+        <p class="stat-mini__n">{{ stats().total }}</p>
+      </div>
+    </div>
+    <div class="sigc-card">
+      <div class="sigc-card__bd stat-mini">
+        <p class="stat-mini__l">Activos</p>
+        <p class="stat-mini__n">{{ stats().activos }}</p>
+      </div>
+    </div>
+    <div class="sigc-card">
+      <div class="sigc-card__bd stat-mini">
+        <p class="stat-mini__l">Bloqueados</p>
+        <p class="stat-mini__n">{{ stats().bloqueados }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sigc-card filt">
+    <div class="sigc-card__bd filt__inner">
+      <input class="sigc-input filt__search" placeholder="Buscar…" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+      <select class="sigc-select filt__sel" [ngModel]="roleFilter()" (ngModelChange)="roleFilter.set($event)">
+        <option value="all">Todos los roles</option>
+        <option value="ADMIN">Admin</option>
+        <option value="FUNCIONARIO">Funcionario</option>
+        <option value="CIUDADANO">Ciudadano</option>
+        <option value="CONSULTOR">Consultor</option>
+      </select>
+      <select class="sigc-select filt__sel" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+        <option value="all">Todos los estados</option>
+        <option value="ACTIVO">Activo</option>
+        <option value="BLOQUEADO">Bloqueado</option>
+        <option value="INACTIVO">Inactivo</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="sigc-card">
+    <div class="sigc-card__hd">
+      <h2 class="sigc-card__title">Listado</h2>
+      <p class="sigc-card__desc">{{ filtered().length }} usuario(s)</p>
+    </div>
+    <div class="sigc-table-wrap">
+      <table class="sigc-table">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Documento</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Intentos</th>
+            <th>Registro</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of filtered(); track u.id) {
+            <tr>
+              <td>
+                <div class="usercell">
+                  <span class="avatar">{{ initials(u.full_name) }}</span>
+                  <div>
+                    <strong>{{ u.full_name }}</strong>
+                    <div class="muted small">{{ u.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="mono">{{ u.document }}</td>
+              <td><span class="sigc-badge sigc-badge--outline">{{ roleLabel(u.rol) }}</span></td>
+              <td><span [class]="statusClass(u.status)">{{ u.status }}</span></td>
+              <td [class.text-danger]="u.failed_attempts > 0">{{ u.failed_attempts }}</td>
+              <td class="muted">{{ formatDate(u.created_at) }}</td>
+              <td>
+                <button type="button" class="sigc-btn sigc-btn--ghost sigc-btn--sm" (click)="openUser(u)">⋮</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+@if (selected(); as u) {
+  <div class="sigc-dialog-backdrop" (click)="closeUser()">
+    <div class="sigc-dialog" (click)="$event.stopPropagation()">
+      <div class="sigc-card__hd">
+        <h2 class="sigc-card__title">{{ u.full_name }}</h2>
+        <p class="sigc-card__desc">{{ roleLabel(u.rol) }}</p>
+      </div>
+      <div class="sigc-card__bd">
+        <p>{{ u.email }}</p>
+        <p>Documento: {{ u.document }}</p>
+        <div class="detail-box">
+          <p><span class="muted">Estado</span> <span [class]="statusClass(u.status)">{{ u.status }}</span></p>
+          <p><span class="muted">Intentos fallidos</span> {{ u.failed_attempts }}</p>
+          <p><span class="muted">Registrado</span> {{ formatDate(u.created_at) }}</p>
+          <p><span class="muted">Actualizado</span> {{ formatDate(u.updated_at) }}</p>
+        </div>
+        <div class="dlg-actions">
+          <button type="button" class="sigc-btn sigc-btn--outline" (click)="closeUser()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

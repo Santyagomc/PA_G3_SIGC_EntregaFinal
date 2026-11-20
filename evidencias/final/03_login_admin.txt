@@ -1,0 +1,7 @@
+# Mutation login (pública) del administrador vía gateway
+# 2026-11-19 21:23:01
+
+> mutation { login(documento: "1000000001", password: "Admin.12345") { documento roles mensaje token } }
+{"data":{"login":{"documento":"1000000001","roles":["ADMIN"],"mensaje":"Inicio de sesión exitoso","token":"<token-omitido>"}}}
+[HTTP 200 � 1.410014s]
+

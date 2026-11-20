@@ -1,0 +1,7 @@
+# Seguridad: credenciales inválidas → UNAUTHORIZED
+# 2026-11-19 21:23:03
+
+> mutation { login(documento: "1000000001", password: "incorrecta") { token } }
+{"errors":[{"message":"Credenciales inválidas.","locations":[{"line":1,"column":12}],"path":["login"],"extensions":{"codigo":"UNAUTHORIZED","correlationId":"demo-final-212255","classification":"UNAUTHORIZED"}}],"data":null}
+[HTTP 200 � 0.283593s]
+

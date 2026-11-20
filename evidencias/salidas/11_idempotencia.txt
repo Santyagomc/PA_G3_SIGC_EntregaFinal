@@ -1,0 +1,8 @@
+# Verificación de idempotencia
+Historial      antes=2  después=2
+Notificaciones antes=2  después=2
+
+# Logs de la API (duplicado detectado por cada consumidor)
+sigc-api  | 2026-10-15T00:11:33.220-05:00  WARN [eventId= requestId=] 1 --- [sigcapi] [nio-8080-exec-9] c.b.s.messaging.producer.EventSimulator  : [SIMULADOR] Escenario DUPLICATE publicado en audit-events-0@2 key=1
+sigc-api  | 2026-10-15T00:11:33.296-05:00  INFO [eventId=0ef85173-e43d-4db1-bc61-51e1dde1abba requestId=1] 1 --- [sigcapi] [nListener-0-C-1] c.b.s.m.consumer.NotificationProcessor   : [NOTIFICACIONES] Evento duplicado ignorado eventId=0ef85173-e43d-4db1-bc61-51e1dde1abba (ya procesado por citizen-notifications)
+sigc-api  | 2026-10-15T00:11:33.310-05:00  INFO [eventId=0ef85173-e43d-4db1-bc61-51e1dde1abba requestId=1] 1 --- [sigcapi] [yListener-0-C-1] c.b.s.m.consumer.AuditEventProcessor     : [AUDITORIA] Evento duplicado ignorado eventId=0ef85173-e43d-4db1-bc61-51e1dde1abba (ya procesado por audit-history)

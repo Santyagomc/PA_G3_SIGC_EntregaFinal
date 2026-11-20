@@ -1,0 +1,15 @@
+# Secretos y configuración local (usar .env.example como plantilla)
+.env
+*.local
+# Compilados y dependencias
+**/target/
+**/node_modules/
+**/dist/
+**/.angular/
+# IDE / SO
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+# Almacenamiento local de adjuntos
+**/storage/

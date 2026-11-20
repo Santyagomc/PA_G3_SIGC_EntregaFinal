@@ -1,0 +1,88 @@
+# GET /events/dead-letters
+# 2026-10-15 00:11:56
+$ call GET /events/dead-letters?size=10
+
+HTTP 200  GET /events/dead-letters?size=10
+{
+    "data": {
+        "content": [
+            {
+                "consumerGroup": "sigc-notifications",
+                "errorMessage": "com.backend.sigcapi.messaging.event.NonRetryableEventException: La PQR 999999999 no existe; no hay a quién notificar",
+                "eventKey": "999999999",
+                "exceptionClass": "com.backend.sigcapi.messaging.event.NonRetryableEventException",
+                "id": 6,
+                "originalOffset": 0,
+                "originalPartition": 1,
+                "originalTopic": "audit-events",
+                "payload": "{\"eventId\":\"1d03b3cc-a67e-4cf4-90bb-7959bf7be8f3\",\"eventType\":\"REQUEST_STATUS_CHANGED\",\"eventVersion\":1,\"source\":\"sigcapi.requests\",\"timestamp\":\"2026-10-15T05:11:50.461362948Z\",\"requestId\":999999999,\"tipoSolicitud\":\"QUEJA\",\"estadoAnterior\":\"CREADO\",\"estadoNuevo\":\"CERRADO\",\"actor\":\"simulador\",\"actorId\":1,\"observaciones\":\"Evento simulado de una PQR inexistente\"}",
+                "receivedAt": "2026-10-15T00:11:51"
+            },
+            {
+                "consumerGroup": "sigc-audit",
+                "errorMessage": "com.backend.sigcapi.messaging.event.NonRetryableEventException: La PQR 999999999 no existe; el evento no se puede auditar",
+                "eventKey": "999999999",
+                "exceptionClass": "com.backend.sigcapi.messaging.event.NonRetryableEventException",
+                "id": 5,
+                "originalOffset": 0,
+                "originalPartition": 1,
+                "originalTopic": "audit-events",
+                "payload": "{\"eventId\":\"1d03b3cc-a67e-4cf4-90bb-7959bf7be8f3\",\"eventType\":\"REQUEST_STATUS_CHANGED\",\"eventVersion\":1,\"source\":\"sigcapi.requests\",\"timestamp\":\"2026-10-15T05:11:50.461362948Z\",\"requestId\":999999999,\"tipoSolicitud\":\"QUEJA\",\"estadoAnterior\":\"CREADO\",\"estadoNuevo\":\"CERRADO\",\"actor\":\"simulador\",\"actorId\":1,\"observaciones\":\"Evento simulado de una PQR inexistente\"}",
+                "receivedAt": "2026-10-15T00:11:51"
+            },
+            {
+                "consumerGroup": "sigc-notifications",
+                "errorMessage": "com.backend.sigcapi.messaging.event.InvalidEventException: requestId es obligatorio y debe ser positivo",
+                "eventKey": "simulador",
+                "exceptionClass": "com.backend.sigcapi.messaging.event.InvalidEventException",
+                "id": 4,
+                "originalOffset": 4,
+                "originalPartition": 0,
+                "originalTopic": "audit-events",
+                "payload": "{\"eventId\":\"453280a2-e4c7-48dc-9509-9ed02c8a2a63\",\"eventType\":\"REQUEST_STATUS_CHANGED\",\"eventVersion\":1,\"source\":\"simulador\"}",
+                "receivedAt": "2026-10-15T00:11:50"
+            },
+            {
+                "consumerGroup": "sigc-audit",
+                "errorMessage": "com.backend.sigcapi.messaging.event.InvalidEventException: requestId es obligatorio y debe ser positivo",
+                "eventKey": "simulador",
+                "exceptionClass": "com.backend.sigcapi.messaging.event.InvalidEventException",
+                "id": 3,
+                "originalOffset": 4,
+                "originalPartition": 0,
+                "originalTopic": "audit-events",
+                "payload": "{\"eventId\":\"453280a2-e4c7-48dc-9509-9ed02c8a2a63\",\"eventType\":\"REQUEST_STATUS_CHANGED\",\"eventVersion\":1,\"source\":\"simulador\"}",
+                "receivedAt": "2026-10-15T00:11:50"
+            },
+            {
+                "consumerGroup": "sigc-notifications",
+                "errorMessage": "com.backend.sigcapi.messaging.event.InvalidEventException: JSON inválido o tipos incompatibles con el contrato: Unexpected end-of-input within/between Object entries",
+                "eventKey": "simulador",
+                "exceptionClass": "com.backend.sigcapi.messaging.event.InvalidEventException",
+                "id": 2,
+                "originalOffset": 3,
+                "originalPartition": 0,
+                "originalTopic": "audit-events",
+                "payload": "{\"eventId\": \"ce65d5af-e7f9-4b98-a5cb-8ac44ede42ac\", \"eventType\": \"REQUEST_STATUS_CHANGED\", ",
+                "receivedAt": "2026-10-15T00:11:50"
+            },
+            {
+                "consumerGroup": "sigc-audit",
+                "errorMessage": "com.backend.sigcapi.messaging.event.InvalidEventException: JSON inválido o tipos incompatibles con el contrato: Unexpected end-of-input within/between Object entries",
+                "eventKey": "simulador",
+                "exceptionClass": "com.backend.sigcapi.messaging.event.InvalidEventException",
+                "id": 1,
+                "originalOffset": 3,
+                "originalPartition": 0,
+                "originalTopic": "audit-events",
+                "payload": "{\"eventId\": \"ce65d5af-e7f9-4b98-a5cb-8ac44ede42ac\", \"eventType\": \"REQUEST_STATUS_CHANGED\", ",
+                "receivedAt": "2026-10-15T00:11:49"
+            }
+        ],
+        "totalElements": 6,
+        "totalPages": 1,
+        "currentPage": 0
+    },
+    "exito": true,
+    "mensaje": "Mensajes recibidos en el Dead Letter Topic."
+}

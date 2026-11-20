@@ -1,0 +1,172 @@
+{
+  "info": {
+    "_postman_id": "18cab142-2203-46cf-9321-58e145e9c1a7",
+    "name": "SIGC API - Entrega 1 Parte 2",
+    "description": "Colección REST actualizada para la API SIGC. Ejecute Registro e Inicio de sesión antes de las solicitudes protegidas.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "jwt",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "Registrar usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Santiago Murcia\",\n  \"email\": \"santiago@example.com\",\n  \"document\": \"1024460334\",\n  \"password\": \"Password.123\",\n  \"admin\": true,\n  \"status\": \"ACTIVO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/auth/register"
+          },
+          "response": []
+        },
+        {
+          "name": "Iniciar sesión",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.token) pm.collectionVariables.set('jwt', response.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"1024460334\",\n  \"password\": \"Password.123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/auth/login"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Solicitudes PQR",
+      "item": [
+        {
+          "name": "Mis solicitudes paginadas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": "{{baseUrl}}/requests/my?page=0&size=10"
+          },
+          "response": []
+        },
+        {
+          "name": "Radicar PQR",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "request",
+                  "value": "{\n  \"title\": \"Solicitud de información\",\n  \"description\": \"Solicitud registrada desde Postman\",\n  \"fullName\": \"Santiago Murcia\",\n  \"email\": \"santiago@example.com\",\n  \"document\": \"1024460334\",\n  \"city\": \"Neiva\",\n  \"phone\": \"3000000000\",\n  \"type\": \"PETICIÓN\",\n  \"acceptedDataPolicy\": true,\n  \"mailStatus\": false,\n  \"expirationDate\": \"2026-10-19\"\n}",
+                  "type": "text",
+                  "contentType": "application/json"
+                },
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": "{{baseUrl}}/requests/save"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Administración",
+      "item": [
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/users/all?page=0&size=10"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar solicitudes",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": "{{baseUrl}}/requests/all?page=0&size=10"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

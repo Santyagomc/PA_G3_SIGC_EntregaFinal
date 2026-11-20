@@ -1,0 +1,142 @@
+"""
+Esquema GraphQL del SIGC (contrato con los clientes).
+Expuesto por el microservicio sigc-gateway (puerto 8081, endpoint /graphql).
+El gateway NO tiene base de datos: cada resolver delega en la API REST (sigc-api)
+por HTTP interno, propagando solo el encabezado Authorization y el X-Correlation-Id.
+Las reglas de negocio permanecen en la API REST; el gateway compone y adapta.
+"""
+
+type Query {
+  """Identidad del usuario autenticado (tomada del JWT validado por el gateway)."""
+  me: Usuario!
+
+  """Solicitudes radicadas por el usuario autenticado. Delegado a GET /requests/my."""
+  misSolicitudes(page: Int = 0, size: Int = 10): PaginaSolicitudes!
+
+  """[ADMIN] Solicitudes con filtros y paginación. Delegado a GET /requests/all."""
+  solicitudes(filtro: FiltroSolicitudes, page: Int = 0, size: Int = 10): PaginaSolicitudes!
+
+  """[ADMIN] Detalle de una solicitud; el campo historial compone GET /requests/{id}/history."""
+  solicitud(id: ID!): Solicitud
+
+  """[ADMIN] Indicadores del tablero. Compuesto de GET /events/summary y conteos por estado. Caché Redis (30 s)."""
+  resumenIndicadores: ResumenIndicadores!
+
+  """[ADMIN] Volumen de solicitudes por estado. Caché Redis (30 s)."""
+  volumenPorEstado: [VolumenEstado!]!
+}
+
+type Mutation {
+  """Público. Delegado a POST /auth/login; devuelve el JWT que se usa en las demás operaciones."""
+  login(documento: String!, password: String!): AuthPayload!
+
+  """Autenticado. Radica una PQR (POST /requests/save, multipart). Requiere al menos un adjunto."""
+  radicarSolicitud(input: RadicarSolicitudInput!): Solicitud!
+
+  """[ADMIN] Cambia el estado de una PQR (PUT /requests/{id}/status). Emite el evento Kafka REQUEST_STATUS_CHANGED en la API."""
+  cambiarEstadoSolicitud(id: ID!, estado: EstadoSolicitud!, observaciones: String): Solicitud!
+}
+
+type Usuario {
+  documento: String!
+  roles: [String!]!
+}
+
+type AuthPayload {
+  token: String!
+  documento: String!
+  roles: [String!]!
+  mensaje: String
+}
+
+type Solicitud {
+  id: ID!
+  titulo: String!
+  descripcion: String
+  nombreCompleto: String
+  correo: String
+  documento: String!
+  ciudad: String
+  telefono: String
+  tipo: TipoSolicitud!
+  estado: EstadoSolicitud!
+  creadaEn: String
+  fechaVencimiento: String
+  correoEnviado: Boolean
+  """[ADMIN] Historial de auditoría escrito por el consumidor Kafka sigc-audit."""
+  historial: [EventoHistorial!]!
+}
+
+type EventoHistorial {
+  id: ID!
+  estadoAnterior: EstadoSolicitud
+  estadoNuevo: EstadoSolicitud!
+  actor: String
+  eventId: String
+  observaciones: String
+  cambiadoEn: String
+  registradoEn: String
+}
+
+type PaginaSolicitudes {
+  contenido: [Solicitud!]!
+  totalElementos: Int!
+  totalPaginas: Int!
+  paginaActual: Int!
+}
+
+type ResumenIndicadores {
+  totalSolicitudes: Int!
+  solicitudesAbiertas: Int!
+  solicitudesCerradas: Int!
+  eventosProcesados: Int!
+  notificaciones: Int!
+  mensajesDlt: Int!
+  generadoEn: String!
+  """true cuando la API no está disponible y se devuelve el último valor conocido (Redis)."""
+  desactualizado: Boolean!
+}
+
+type VolumenEstado {
+  estado: EstadoSolicitud!
+  cantidad: Int!
+}
+
+input FiltroSolicitudes {
+  estado: EstadoSolicitud
+  tipo: TipoSolicitud
+  busqueda: String
+}
+
+input RadicarSolicitudInput {
+  titulo: String!
+  descripcion: String!
+  nombreCompleto: String!
+  correo: String!
+  documento: String!
+  ciudad: String!
+  telefono: String!
+  tipo: TipoSolicitud!
+  aceptaPoliticaDatos: Boolean!
+  """Fecha ISO (AAAA-MM-DD)."""
+  fechaVencimiento: String!
+  adjuntos: [AdjuntoInput!]!
+}
+
+input AdjuntoInput {
+  nombre: String!
+  contenidoBase64: String!
+  tipoMime: String
+}
+
+enum TipoSolicitud {
+  PETICION
+  QUEJA
+  RECLAMO
+}
+
+enum EstadoSolicitud {
+  CREADO
+  FALTA_DOCUMENTACION
+  CERRADO
+}

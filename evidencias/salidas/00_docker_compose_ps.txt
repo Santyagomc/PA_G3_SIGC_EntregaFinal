@@ -1,0 +1,9 @@
+# Servicios levantados con Docker Compose
+# 2026-10-15 00:08:45
+$ docker compose ps
+
+NAME            IMAGE                            COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+sigc-api        sigc-api                         "java -jar /app/app.…"   api        17 minutes ago   Up 16 minutes             0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+sigc-db         mariadb:10.11                    "docker-entrypoint.s…"   db         9 days ago       Up 17 minutes (healthy)   0.0.0.0:3307->3306/tcp, [::]:3307->3306/tcp
+sigc-kafka      apache/kafka:3.9.1               "/__cacert_entrypoin…"   kafka      9 days ago       Up 17 minutes (healthy)   0.0.0.0:9092->9092/tcp, [::]:9092->9092/tcp
+sigc-kafka-ui   ghcr.io/kafbat/kafka-ui:latest   "/bin/sh -c 'java --…"   kafka-ui   9 days ago       Up 16 minutes             0.0.0.0:8090->8080/tcp, [::]:8090->8080/tcp

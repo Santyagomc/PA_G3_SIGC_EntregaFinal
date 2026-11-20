@@ -1,0 +1,9 @@
+# kafka-console-consumer sobre audit-events
+# 2026-10-15 00:10:10
+$ kexec /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:29092 --topic audit-events --from-beginning --property print.key=true --property print.partition=true --property print.offset=true --property print.headers=true --timeout-ms 8000
+
+Partition:0	Offset:0	x-event-id:254181ca-38d8-4925-b9b5-86d893a2840e,x-event-type:REQUEST_CREATED,x-event-version:1,x-source:sigcapi.requests	1	{"eventId":"254181ca-38d8-4925-b9b5-86d893a2840e","eventType":"REQUEST_CREATED","eventVersion":1,"source":"sigcapi.requests","timestamp":"2026-10-15T05:09:56.853574083Z","requestId":1,"tipoSolicitud":"QUEJA","estadoAnterior":null,"estadoNuevo":"CREADO","actor":"1000000001","actorId":1,"observaciones":null}
+Partition:0	Offset:1	x-event-id:0ef85173-e43d-4db1-bc61-51e1dde1abba,x-event-type:REQUEST_STATUS_CHANGED,x-event-version:1,x-source:sigcapi.requests	1	{"eventId":"0ef85173-e43d-4db1-bc61-51e1dde1abba","eventType":"REQUEST_STATUS_CHANGED","eventVersion":1,"source":"sigcapi.requests","timestamp":"2026-10-15T05:10:01.347339476Z","requestId":1,"tipoSolicitud":"QUEJA","estadoAnterior":"CREADO","estadoNuevo":"CERRADO","actor":"1000000001","actorId":1,"observaciones":"Respuesta de fondo enviada al ciudadano"}
+[2026-10-15 05:10:45,713] ERROR Error processing message, terminating consumer process:  (org.apache.kafka.tools.consumer.ConsoleConsumer)
+org.apache.kafka.common.errors.TimeoutException
+Processed a total of 2 messages

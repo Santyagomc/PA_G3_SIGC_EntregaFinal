@@ -1,0 +1,24 @@
+# RecuperaciÃ³n: se inicia la API y el gateway vuelve a responder (circuit breaker HALF_OPEN â†’ CLOSED)
+# 2026-11-19 21:23:40
+
+ Container sigc-kafka Waiting 
+ Container sigc-kafka Healthy 
+ Container sigc-kafka-init Starting 
+ Container sigc-kafka-init Started 
+ Container sigc-kafka Waiting 
+ Container sigc-kafka-init Waiting 
+ Container sigc-db Waiting 
+ Container sigc-kafka Healthy 
+ Container sigc-db Healthy 
+ Container sigc-kafka-init Exited 
+ Container sigc-api Starting 
+ Container sigc-api Started 
+API disponible de nuevo
+> query { solicitudes(page: 0, size: 1) { totalElementos } }
+{"data":{"solicitudes":{"totalElementos":4}}}
+[HTTP 200 · 0.468273s]
+
+> query { resumenIndicadores { totalSolicitudes desactualizado } }
+{"data":{"resumenIndicadores":{"totalSolicitudes":4,"desactualizado":false}}}
+[HTTP 200 · 0.322729s]
+

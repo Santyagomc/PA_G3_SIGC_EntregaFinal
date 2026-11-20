@@ -1,0 +1,209 @@
+# SIGC - Entrega final (P3): arquitectura completa
+#   cp .env.example .env && docker compose up --build -d
+# Orden de arranque (depends_on + healthchecks):
+#   db, kafka, redis  ->  kafka-init (crea tópicos)  ->  api  ->  gateway  ->  frontend
+#   kafka-ui es una herramienta de inspección (opcional)
+# Redes:
+#   sigc-backend  : db, kafka, kafka-init, kafka-ui, redis, api, gateway (tráfico interno)
+#   sigc-frontend : api, gateway, frontend
+name: sigc
+
+services:
+  db:
+    image: mariadb:10.11
+    container_name: sigc-db
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-sigcapi}
+      MARIADB_USER: ${DB_USER:-sigc_user}
+      MARIADB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD en .env (copie .env.example)}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Defina DB_ROOT_PASSWORD en .env (copie .env.example)}
+      TZ: America/Bogota
+    ports:
+      - "${DB_PORT:-3307}:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks: [backend]
+
+  # Broker Apache Kafka en modo KRaft (sin ZooKeeper), nodo único broker+controller.
+  #  - INTERNAL (kafka:29092): tráfico entre contenedores
+  #  - EXTERNAL (localhost:9092): herramientas en el equipo anfitrión
+  kafka:
+    image: apache/kafka:3.9.1
+    container_name: sigc-kafka
+    hostname: kafka
+    user: "0:0"
+    ports:
+      - "${KAFKA_EXTERNAL_PORT:-9092}:9092"
+    environment:
+      CLUSTER_ID: "5L6g3nShT-eMCtK--X86sw"
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:${KAFKA_EXTERNAL_PORT:-9092}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server kafka:29092 > /dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 20s
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks: [backend]
+
+  # Contenedor de un solo uso: crea (si no existen) los tópicos del diseño.
+  kafka-init:
+    image: apache/kafka:3.9.1
+    container_name: sigc-kafka-init
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -e
+        BS=kafka:29092
+        T=/opt/kafka/bin/kafka-topics.sh
+        $$T --bootstrap-server $$BS --create --if-not-exists --topic ${KAFKA_TOPIC_REQUEST_EVENTS:-audit-events} \
+            --partitions 3 --replication-factor 1 --config retention.ms=604800000 --config cleanup.policy=delete
+        $$T --bootstrap-server $$BS --create --if-not-exists --topic ${KAFKA_TOPIC_REQUEST_EVENTS_DLT:-audit-events.DLT} \
+            --partitions 3 --replication-factor 1 --config retention.ms=2592000000
+        echo "==== Tópicos SIGC ===="
+        $$T --bootstrap-server $$BS --describe --topic ${KAFKA_TOPIC_REQUEST_EVENTS:-audit-events}
+        $$T --bootstrap-server $$BS --describe --topic ${KAFKA_TOPIC_REQUEST_EVENTS_DLT:-audit-events.DLT}
+    restart: "no"
+    networks: [backend]
+
+  # Interfaz web para inspeccionar tópicos, mensajes y grupos de consumidores: http://localhost:8090
+  kafka-ui:
+    image: ghcr.io/kafbat/kafka-ui:latest
+    container_name: sigc-kafka-ui
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "${KAFKA_UI_PORT:-8090}:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: sigc-local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+    networks: [backend]
+
+  # Redis: caché de los indicadores del dashboard (lectura frecuente) usada por el gateway.
+  # Sin persistencia: si se pierde, el gateway recalcula desde la API REST.
+  redis:
+    image: redis:7.4-alpine
+    container_name: sigc-redis
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [backend]
+
+  api:
+    build:
+      context: ./api.documental
+    image: sigc-api:3.0.0
+    container_name: sigc-api
+    ports:
+      - "${API_PORT:-8080}:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${DB_NAME:-sigcapi}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-sigc_user}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?Defina JWT_SECRET en .env (copie .env.example)}
+      STORAGE_PATH: ${STORAGE_PATH:-/app/storage/documents}
+      ADMIN_DOCUMENT: ${ADMIN_DOCUMENT:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_NAME: ${ADMIN_NAME:-Administrador SIGC}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4300,http://localhost:4200}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC_REQUEST_EVENTS: ${KAFKA_TOPIC_REQUEST_EVENTS:-audit-events}
+      KAFKA_TOPIC_REQUEST_EVENTS_DLT: ${KAFKA_TOPIC_REQUEST_EVENTS_DLT:-audit-events.DLT}
+      MAIL_ENABLED: ${MAIL_ENABLED:-false}
+      EMAIL_USERNAME: ${EMAIL_USERNAME:-}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      TZ: America/Bogota
+    volumes:
+      - documents_data:/app/storage/documents
+    healthcheck:
+      # El puerto HTTP acepta conexiones (la imagen JRE no trae curl)
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/127.0.0.1/8080'"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 40s
+    depends_on:
+      db:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
+    networks: [backend, frontend]
+
+  # Gateway GraphQL: punto de entrada del cliente. Valida JWT, autoriza por rol, compone
+  # respuestas a partir de la API REST (timeout + retry + circuit breaker) y cachea en Redis.
+  gateway:
+    build:
+      context: ./gateway
+    image: sigc-gateway:1.0.0
+    container_name: sigc-gateway
+    ports:
+      - "${GATEWAY_PORT:-8081}:8081"
+    environment:
+      API_BASE_URL: http://api:8080
+      JWT_SECRET: ${JWT_SECRET}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4300,http://localhost:4200}
+      API_CONNECT_TIMEOUT_MS: ${API_CONNECT_TIMEOUT_MS:-2000}
+      API_READ_TIMEOUT_MS: ${API_READ_TIMEOUT_MS:-5000}
+      TZ: America/Bogota
+    depends_on:
+      api:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks: [backend, frontend]
+
+  # Frontend Angular compilado y servido por nginx: http://localhost:4300
+  frontend:
+    build:
+      context: ./Front-Angular-ProyectoAula8voSemestre-main
+    image: sigc-frontend:3.0.0
+    container_name: sigc-frontend
+    ports:
+      - "${FRONTEND_PORT:-4300}:80"
+    depends_on:
+      - gateway
+    networks: [frontend]
+
+networks:
+  backend:
+    name: sigc-backend
+  frontend:
+    name: sigc-frontend
+
+volumes:
+  mysql_data:
+  kafka_data:
+  documents_data:

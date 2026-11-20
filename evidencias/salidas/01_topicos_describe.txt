@@ -1,0 +1,16 @@
+# Tópicos audit-events y audit-events.DLT
+# 2026-10-15 00:09:04
+$ kexec bash -c /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --list; echo; /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic audit-events; /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic audit-events.DLT
+
+__consumer_offsets
+audit-events
+audit-events.DLT
+
+Topic: audit-events	TopicId: s3fLB1nNTvGqWUBN2dcGKw	PartitionCount: 3	ReplicationFactor: 1	Configs: cleanup.policy=delete,retention.ms=604800000
+	Topic: audit-events	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: audit-events	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: audit-events	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+Topic: audit-events.DLT	TopicId: OLMBvS3DSvaBMqFOwrtFiw	PartitionCount: 3	ReplicationFactor: 1	Configs: retention.ms=2592000000
+	Topic: audit-events.DLT	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: audit-events.DLT	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: audit-events.DLT	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 

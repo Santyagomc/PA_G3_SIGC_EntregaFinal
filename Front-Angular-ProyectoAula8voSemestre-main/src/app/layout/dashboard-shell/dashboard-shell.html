@@ -1,0 +1,75 @@
+<div class="shell">
+  <aside class="shell__side" [class.shell__side--collapsed]="collapsed()">
+    <div class="shell__brand">
+      <div class="shell__logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+      </div>
+      @if (!collapsed()) {
+        <div class="shell__brand-text">
+          <span class="shell__brand-title">SIGC</span>
+          <span class="shell__brand-sub">PQRS Huila</span>
+        </div>
+      }
+    </div>
+
+    <nav class="shell__nav">
+      <a routerLink="/dashboard" routerLinkActive="shell__link--active" [routerLinkActiveOptions]="{ exact: true }" class="shell__link" [title]="collapsed() ? 'Dashboard' : ''">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg>
+        @if (!collapsed()) {<span>Dashboard</span>}
+      </a>
+      <a routerLink="/dashboard/solicitudes" routerLinkActive="shell__link--active" class="shell__link" [title]="collapsed() ? 'Solicitudes' : ''">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13" /><path d="M8 12h13" /><path d="M8 18h13" /><path d="M3 6h.01" /><path d="M3 12h.01" /><path d="M3 18h.01" /></svg>
+        @if (!collapsed()) {<span>Solicitudes</span>}
+      </a>
+      <a routerLink="/dashboard/documentos" routerLinkActive="shell__link--active" class="shell__link" [title]="collapsed() ? 'Documentos' : ''">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2" /></svg>
+        @if (!collapsed()) {<span>Documentos</span>}
+      </a>
+      @if (showUsuarios()) {
+        <a routerLink="/dashboard/usuarios" routerLinkActive="shell__link--active" class="shell__link" [title]="collapsed() ? 'Usuarios' : ''">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+          @if (!collapsed()) {<span>Usuarios</span>}
+        </a>
+      }
+      <a routerLink="/dashboard/chatbot" routerLinkActive="shell__link--active" class="shell__link" [title]="collapsed() ? 'Asistente' : ''">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></svg>
+        @if (!collapsed()) {<span>Asistente</span>}
+      </a>
+    </nav>
+
+    <div class="shell__footer">
+      @if (!collapsed()) {
+        <div class="shell__user">
+          <p class="shell__user-name">{{ displayName() }}</p>
+          <p class="shell__user-role">{{ displayRole() }}</p>
+        </div>
+      }
+      @if (!collapsed()) {
+        <a routerLink="/dashboard/configuracion" class="shell__btn-ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>
+          Configuración
+        </a>
+      }
+      <button type="button" class="shell__btn-logout" (click)="logout()" [class.shell__btn-logout--icon]="collapsed()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>
+        @if (!collapsed()) {<span>Cerrar sesión</span>}
+      </button>
+      <button type="button" class="shell__collapse" (click)="toggleSidebar()" [attr.aria-expanded]="!collapsed()">
+        @if (collapsed()) {
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6" /></svg>
+        } @else {
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6" /></svg>
+        }
+      </button>
+    </div>
+  </aside>
+
+  <main class="shell__main">
+    <div class="shell__content">
+      <router-outlet />
+    </div>
+  </main>
+</div>

@@ -1,0 +1,1095 @@
+openapi: 3.0.3
+info:
+  title: SIGC API - Sistema Inteligente de Gestión de PQR
+  version: 2.0.0
+  description: 'API REST funcional para usuarios, solicitudes PQR, documentos, reglas y sesiones de chat. Autenticación con
+    JWT (Bearer). Errores con formato {exito, mensaje, data}. Entrega 2 (P2): integración orientada a eventos con Kafka. La
+    radicación y el cambio de estado publican eventos (ver contracts/asyncapi.yaml); la auditoría y las notificaciones se
+    procesan de forma asíncrona.'
+servers:
+- url: http://localhost:8080
+security:
+- bearerAuth: []
+paths:
+  /auth/register:
+    post:
+      tags:
+      - Autenticación
+      security: []
+      summary: Registrar ciudadano (rol CONSULTOR)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterInput'
+      responses:
+        '201':
+          description: Creado
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      description: El registro público nunca crea administradores. El administrador inicial se crea al arrancar con las variables
+        ADMIN_DOCUMENT, ADMIN_PASSWORD y ADMIN_EMAIL; los demás administradores los crea un ADMIN con POST /admin/users/save.
+  /auth/login:
+    post:
+      tags:
+      - Autenticación
+      security: []
+      summary: Iniciar sesión y obtener JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        '200':
+          description: Token JWT emitido
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Credenciales inválidas (documento inexistente o contraseña incorrecta).
+          content:
+            application/json:
+              schema: &id001
+                $ref: '#/components/schemas/ApiResponse'
+        '403':
+          description: Usuario bloqueado temporalmente por intentos fallidos.
+          content:
+            application/json:
+              schema: *id001
+  /admin/users/all:
+    get:
+      tags:
+      - Usuarios
+      summary: Listar usuarios (ADMIN)
+      parameters:
+      - $ref: '#/components/parameters/status'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          $ref: '#/components/responses/Page'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /admin/users/findById/{id}:
+    get:
+      tags:
+      - Usuarios
+      summary: Consultar usuario (ADMIN)
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Usuario
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /admin/users/save:
+    post:
+      tags:
+      - Usuarios
+      summary: Crear usuario (ADMIN)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: Creado
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /admin/users/update/{id}:
+    put:
+      tags:
+      - Usuarios
+      summary: Actualizar usuario (ADMIN)
+      parameters:
+      - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '200':
+          description: Actualizado
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /admin/users/delete/{id}:
+    delete:
+      tags:
+      - Usuarios
+      summary: Eliminar usuario (ADMIN)
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: Eliminado
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /admin/users/profile:
+    get:
+      tags:
+      - Usuarios
+      summary: Consultar perfil autenticado
+      responses:
+        '200':
+          description: Perfil
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      tags:
+      - Usuarios
+      summary: Actualizar perfil autenticado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileInput'
+      responses:
+        '200':
+          description: Actualizado
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /admin/users/change-password:
+    post:
+      tags:
+      - Usuarios
+      summary: Cambiar contraseña autenticada
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordInput'
+      responses:
+        '200':
+          description: Actualizada
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /requests/all:
+    get:
+      tags:
+      - Solicitudes
+      summary: Listar solicitudes (ADMIN)
+      parameters:
+      - $ref: '#/components/parameters/search'
+      - $ref: '#/components/parameters/status'
+      - $ref: '#/components/parameters/type'
+      - $ref: '#/components/parameters/from'
+      - $ref: '#/components/parameters/to'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          $ref: '#/components/responses/Page'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /requests/my:
+    get:
+      tags:
+      - Solicitudes
+      summary: Listar solicitudes del usuario autenticado
+      parameters:
+      - $ref: '#/components/parameters/from'
+      - $ref: '#/components/parameters/to'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          $ref: '#/components/responses/Page'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /requests/findById/{id}:
+    get:
+      tags:
+      - Solicitudes
+      summary: Consultar solicitud (ADMIN)
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Solicitud
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /requests/save:
+    post:
+      tags:
+      - Solicitudes
+      summary: Radicar PQR y sus soportes
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - request
+              - files
+              properties:
+                request:
+                  $ref: '#/components/schemas/RequestInput'
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '201':
+          description: Radicada
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+      description: Emite el evento REQUEST_CREATED (acuse de radicación asíncrono y primer registro de auditoría).
+  /requests/{id}/status:
+    put:
+      tags:
+      - Solicitudes
+      summary: Cambiar estado de solicitud (ADMIN)
+      parameters:
+      - $ref: '#/components/parameters/id'
+      - name: status
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - CREADO
+          - FALTA_DOCUMENTACION
+          - CERRADO
+      - name: observations
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Estado actualizado
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      description: Confirma el cambio y registra el evento REQUEST_STATUS_CHANGED en el outbox (misma transacción). El historial
+        (consumidor sigc-audit) y la notificación (consumidor sigc-notifications) se procesan de forma asíncrona. Si el estado
+        solicitado es igual al actual responde 400 y no emite evento.
+  /requests/delete/{id}:
+    delete:
+      tags:
+      - Solicitudes
+      summary: Eliminar solicitud (ADMIN)
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: Eliminada
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /documents/all:
+    get:
+      tags:
+      - Documentos
+      summary: Listar documentos (ADMIN)
+      parameters:
+      - name: request
+        in: query
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/from'
+      - $ref: '#/components/parameters/to'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          $ref: '#/components/responses/Page'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /documents/findById/{id}:
+    get:
+      tags:
+      - Documentos
+      summary: Consultar documento (ADMIN)
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Documento
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /documents/delete/{id}:
+    delete:
+      tags:
+      - Documentos
+      summary: Eliminar documento (ADMIN)
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: Eliminado
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /admin/rules/all:
+    get:
+      tags:
+      - Reglas
+      summary: Listar reglas (ADMIN)
+      responses:
+        '200':
+          description: Reglas
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /admin/rules/save:
+    post:
+      tags:
+      - Reglas
+      summary: Crear regla (ADMIN)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleInput'
+      responses:
+        '201':
+          description: Creada
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /admin/standards/all:
+    get:
+      tags:
+      - Estándares
+      summary: Listar estándares (ADMIN)
+      responses:
+        '200':
+          description: Estándares
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /admin/standards/save:
+    post:
+      tags:
+      - Estándares
+      summary: Crear estándar (ADMIN)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StandardInput'
+      responses:
+        '201':
+          description: Creado
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /sessions/all:
+    get:
+      tags:
+      - Chat
+      summary: Listar sesiones (ADMIN)
+      parameters:
+      - $ref: '#/components/parameters/from'
+      - $ref: '#/components/parameters/to'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          $ref: '#/components/responses/Page'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /sessions/findById/{id}:
+    get:
+      tags:
+      - Chat
+      summary: Consultar sesión de chat (ADMIN)
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Sesión
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /sessions/save:
+    post:
+      tags:
+      - Chat
+      summary: Crear sesión de chat
+      parameters:
+      - name: fullName
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Creada
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /sessions/logout/{id}:
+    delete:
+      tags:
+      - Chat
+      summary: Cerrar sesión de chat
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: Cerrada
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /chats/save:
+    post:
+      tags:
+      - Chat
+      summary: Guardar mensaje y generar respuesta si es del usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatInput'
+      responses:
+        '201':
+          description: Mensaje creado
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /requests/{id}/history:
+    get:
+      tags:
+      - Solicitudes
+      summary: Historial de auditoría de una PQR (ADMIN)
+      description: Resultado verificable del consumidor Kafka sigc-audit. Cada fila proviene de un evento (eventId único).
+        changedAt = momento del hecho; recordedAt = momento en que el consumidor lo persistió.
+      parameters:
+      - $ref: '#/components/parameters/id'
+      - name: from
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        schema:
+          type: string
+          format: date
+      - &id004
+        $ref: '#/components/parameters/page'
+      - &id005
+        $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiEnvelope'
+        '401': &id002
+          $ref: '#/components/responses/Unauthorized'
+        '403': &id003
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /events/summary:
+    get:
+      tags:
+      - Eventos (Kafka)
+      summary: Resumen del flujo de eventos (ADMIN)
+      description: Conteos del outbox por estado, eventos procesados por consumidor, historial, notificaciones y mensajes
+        en DLT.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiEnvelope'
+        '401': *id002
+        '403': *id003
+  /events/outbox:
+    get:
+      tags:
+      - Eventos (Kafka)
+      summary: Eventos del outbox / productor (ADMIN)
+      description: Estado de publicación (PENDING, PUBLISHED, FAILED), intentos, último error, partición y offset Kafka.
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - PENDING
+          - PUBLISHED
+          - FAILED
+      - name: requestId
+        in: query
+        schema:
+          type: integer
+      - *id004
+      - *id005
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiEnvelope'
+        '401': *id002
+        '403': *id003
+  /events/outbox/{id}/retry:
+    post:
+      tags:
+      - Eventos (Kafka)
+      summary: Reintentar un evento FAILED (ADMIN)
+      description: Devuelve el evento a PENDING para que el relay lo publique de nuevo.
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiEnvelope'
+        '401': *id002
+        '403': *id003
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /events/processed:
+    get:
+      tags:
+      - Eventos (Kafka)
+      summary: Eventos procesados por los consumidores (ADMIN)
+      description: Registro de idempotencia (event_id, consumer) con resultado PROCESADO u OMITIDO.
+      parameters:
+      - name: consumer
+        in: query
+        schema:
+          type: string
+          enum:
+          - audit-history
+          - citizen-notifications
+      - *id004
+      - *id005
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiEnvelope'
+        '401': *id002
+        '403': *id003
+  /events/notifications:
+    get:
+      tags:
+      - Eventos (Kafka)
+      summary: Notificaciones generadas (ADMIN)
+      description: Resultado del consumidor sigc-notifications (SENT o SIMULATED).
+      parameters:
+      - name: requestId
+        in: query
+        schema:
+          type: integer
+      - *id004
+      - *id005
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiEnvelope'
+        '401': *id002
+        '403': *id003
+  /events/dead-letters:
+    get:
+      tags:
+      - Eventos (Kafka)
+      summary: Mensajes del Dead Letter Topic (ADMIN)
+      description: Mensajes de audit-events.DLT con origen (tópico/partición/offset/grupo) y causa.
+      parameters:
+      - *id004
+      - *id005
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiEnvelope'
+        '401': *id002
+        '403': *id003
+  /events/simulate/duplicate/{eventId}:
+    post:
+      tags:
+      - Eventos (Kafka)
+      summary: Simular un duplicado (ADMIN)
+      description: 'Reenvía byte a byte un evento ya PUBLISHED. Esperado: ambos consumidores lo ignoran (idempotencia).'
+      parameters:
+      - name: eventId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '202':
+          description: 'Aceptado: mensaje publicado en Kafka'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiEnvelope'
+        '401': *id002
+        '403': *id003
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /events/simulate/invalid-payload:
+    post:
+      tags:
+      - Eventos (Kafka)
+      summary: Simular JSON mal formado (ADMIN)
+      description: 'Esperado: InvalidEventException sin reintentos → audit-events.DLT → failed_events (una fila por grupo).'
+      responses:
+        '202':
+          description: 'Aceptado: mensaje publicado en Kafka'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiEnvelope'
+        '401': *id002
+        '403': *id003
+  /events/simulate/contract-violation:
+    post:
+      tags:
+      - Eventos (Kafka)
+      summary: Simular violación de contrato (ADMIN)
+      description: 'JSON válido sin campos obligatorios. Esperado: DLT sin reintentos.'
+      responses:
+        '202':
+          description: 'Aceptado: mensaje publicado en Kafka'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiEnvelope'
+        '401': *id002
+        '403': *id003
+  /events/simulate/unknown-request:
+    post:
+      tags:
+      - Eventos (Kafka)
+      summary: Simular evento de PQR inexistente (ADMIN)
+      description: 'Esperado: NonRetryableEventException → DLT sin reintentos.'
+      responses:
+        '202':
+          description: 'Aceptado: mensaje publicado en Kafka'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiEnvelope'
+        '401': *id002
+        '403': *id003
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Número de página, base 0. Valores negativos se ajustan a 0.
+    size:
+      name: size
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+      description: Tamaño de página. Se ajusta al rango 1–100.
+    search:
+      name: search
+      in: query
+      schema:
+        type: string
+    status:
+      name: status
+      in: query
+      schema:
+        type: string
+    type:
+      name: type
+      in: query
+      schema:
+        type: string
+        enum:
+        - PETICIÓN
+        - QUEJA
+        - RECLAMO
+    from:
+      name: from
+      in: query
+      schema:
+        type: string
+        format: date
+    to:
+      name: to
+      in: query
+      schema:
+        type: string
+        format: date
+  responses:
+    BadRequest:
+      description: Datos inválidos, petición mal formada o regla de negocio incumplida (el detalle por campo va en data).
+      content:
+        application/json:
+          schema: *id001
+    NotFound:
+      description: Recurso no encontrado.
+      content:
+        application/json:
+          schema: *id001
+    Page:
+      description: Resultado paginado
+    Unauthorized:
+      description: 'No autenticado: falta el token JWT o es inválido/expirado.'
+      content:
+        application/json:
+          schema: *id001
+    Forbidden:
+      description: Sin permisos (se requiere rol ADMIN).
+      content:
+        application/json:
+          schema: *id001
+    Conflict:
+      description: El recurso ya existe o viola una restricción de integridad.
+      content:
+        application/json:
+          schema: *id001
+    PayloadTooLarge:
+      description: El archivo (máx. 10 MB) o la petición (máx. 20 MB) supera el tamaño permitido.
+      content:
+        application/json:
+          schema: *id001
+  schemas:
+    LoginInput:
+      type: object
+      required:
+      - username
+      - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+    UserInput:
+      type: object
+      required:
+      - name
+      - email
+      - document
+      - password
+      - admin
+      - status
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        document:
+          type: string
+        password:
+          type: string
+          format: password
+        admin:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - ACTIVO
+          - INACTIVO
+          - BLOQUEADO
+    ProfileInput:
+      type: object
+      required:
+      - name
+      - email
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+    ChangePasswordInput:
+      type: object
+      required:
+      - currentPassword
+      - newPassword
+      - confirmPassword
+      properties:
+        currentPassword:
+          type: string
+          format: password
+        newPassword:
+          type: string
+          format: password
+        confirmPassword:
+          type: string
+          format: password
+    RequestInput:
+      type: object
+      required:
+      - title
+      - description
+      - fullName
+      - email
+      - document
+      - city
+      - phone
+      - type
+      - acceptedDataPolicy
+      - expirationDate
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+          format: email
+        document:
+          type: string
+        city:
+          type: string
+        phone:
+          type: string
+        type:
+          type: string
+          enum:
+          - PETICIÓN
+          - QUEJA
+          - RECLAMO
+        acceptedDataPolicy:
+          type: boolean
+        mailStatus:
+          type: boolean
+        expirationDate:
+          type: string
+          format: date
+    RuleInput:
+      type: object
+      required:
+      - fullName
+      - standardId
+      - operator
+      - value
+      - suggestion
+      - isBlocking
+      properties:
+        fullName:
+          type: string
+        standardId:
+          type: integer
+        operator:
+          type: string
+          enum:
+          - EQUALS
+          - NOT_EQUALS
+          - CONTAINS
+          - GREATER_THAN
+          - LESS_THAN
+          - IS_NOT_NULL
+        value:
+          type: string
+        suggestion:
+          type: string
+        isBlocking:
+          type: boolean
+    StandardInput:
+      type: object
+      required:
+      - code
+      - title
+      - description
+      properties:
+        code:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+    ChatInput:
+      type: object
+      required:
+      - sesionId
+      - mensaje
+      - type
+      properties:
+        sesionId:
+          type: integer
+        mensaje:
+          type: string
+        type:
+          type: string
+          enum:
+          - USUARIO
+          - ASESORIA
+    ApiResponse:
+      type: object
+      properties:
+        exito:
+          type: boolean
+        mensaje:
+          type: string
+        data:
+          description: Contenido de la respuesta; en errores 400 de validación es un mapa campo → mensaje.
+    RegisterInput:
+      type: object
+      required:
+      - name
+      - email
+      - document
+      - password
+      description: Registro público de ciudadanos. Siempre crea un usuario con rol CONSULTOR y estado ACTIVO; cualquier otro
+        campo enviado (por ejemplo admin) se ignora.
+      properties:
+        name:
+          type: string
+          minLength: 10
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        document:
+          type: string
+          minLength: 8
+        password:
+          type: string
+          format: password
+          description: Debe contener al menos una mayúscula, una minúscula y un dígito.
+    ApiEnvelope:
+      type: object
+      properties:
+        exito:
+          type: boolean
+        mensaje:
+          type: string
+        data: {}
+tags:
+- name: Eventos (Kafka)
+  description: 'Observabilidad y simulación del flujo asíncrono. Contrato de los mensajes: contracts/asyncapi.yaml'

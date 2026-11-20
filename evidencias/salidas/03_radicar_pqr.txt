@@ -1,0 +1,21 @@
+# POST /requests/save (multipart) — respuesta en 5.624197 s, sin esperar a Kafka
+{
+    "data": {
+        "acceptedDataPolicy": true,
+        "city": "Neiva",
+        "createdAt": "2026-10-15T00:09:56.477781",
+        "description": "Radiqué una petición hace 20 días y no he recibido respuesta.",
+        "document": "1075000001",
+        "email": "ciudadano.demo@example.com",
+        "expirationDate": "2030-12-31",
+        "fullName": "Ciudadano Demo Kafka",
+        "id": 1,
+        "mailStatus": false,
+        "phone": "3001234567",
+        "status": "CREADO",
+        "title": "Demora en respuesta a mi petición",
+        "type": "QUEJA"
+    },
+    "exito": true,
+    "mensaje": "Radicación exitosa. El acuse al ciudadano y la auditoría se procesan de forma asíncrona (Kafka)."
+}

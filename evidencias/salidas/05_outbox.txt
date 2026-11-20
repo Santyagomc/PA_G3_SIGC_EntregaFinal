@@ -1,0 +1,48 @@
+# GET /events/outbox?requestId=1
+# 2026-10-15 00:10:08
+$ call GET /events/outbox?requestId=1
+
+HTTP 200  GET /events/outbox?requestId=1
+{
+    "data": {
+        "content": [
+            {
+                "aggregateId": 1,
+                "attempts": 0,
+                "createdAt": "2026-10-15T00:10:01",
+                "eventId": "0ef85173-e43d-4db1-bc61-51e1dde1abba",
+                "eventKey": "1",
+                "eventType": "REQUEST_STATUS_CHANGED",
+                "id": 2,
+                "kafkaOffset": 1,
+                "kafkaPartition": 0,
+                "lastError": null,
+                "payload": "{\"eventId\":\"0ef85173-e43d-4db1-bc61-51e1dde1abba\",\"eventType\":\"REQUEST_STATUS_CHANGED\",\"eventVersion\":1,\"source\":\"sigcapi.requests\",\"timestamp\":\"2026-10-15T05:10:01.347339476Z\",\"requestId\":1,\"tipoSolicitud\":\"QUEJA\",\"estadoAnterior\":\"CREADO\",\"estadoNuevo\":\"CERRADO\",\"actor\":\"1000000001\",\"actorId\":1,\"observaciones\":\"Respuesta de fondo enviada al ciudadano\"}",
+                "publishedAt": "2026-10-15T00:10:04",
+                "status": "PUBLISHED",
+                "topic": "audit-events"
+            },
+            {
+                "aggregateId": 1,
+                "attempts": 0,
+                "createdAt": "2026-10-15T00:09:56",
+                "eventId": "254181ca-38d8-4925-b9b5-86d893a2840e",
+                "eventKey": "1",
+                "eventType": "REQUEST_CREATED",
+                "id": 1,
+                "kafkaOffset": 0,
+                "kafkaPartition": 0,
+                "lastError": null,
+                "payload": "{\"eventId\":\"254181ca-38d8-4925-b9b5-86d893a2840e\",\"eventType\":\"REQUEST_CREATED\",\"eventVersion\":1,\"source\":\"sigcapi.requests\",\"timestamp\":\"2026-10-15T05:09:56.853574083Z\",\"requestId\":1,\"tipoSolicitud\":\"QUEJA\",\"estadoAnterior\":null,\"estadoNuevo\":\"CREADO\",\"actor\":\"1000000001\",\"actorId\":1,\"observaciones\":null}",
+                "publishedAt": "2026-10-15T00:10:02",
+                "status": "PUBLISHED",
+                "topic": "audit-events"
+            }
+        ],
+        "totalElements": 2,
+        "totalPages": 1,
+        "currentPage": 0
+    },
+    "exito": true,
+    "mensaje": "Eventos del outbox (productor)."
+}

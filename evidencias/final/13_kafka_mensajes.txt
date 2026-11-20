@@ -1,0 +1,5 @@
+# Mensajes de la PQR 4 en el tópico audit-events con headers (x-correlation-id)
+# 2026-11-19 21:23:12
+
+Partition:1	x-event-id:07669372-de8b-438a-8156-6d5e2d07cdd6,x-event-type:REQUEST_CREATED,x-event-version:1,x-source:sigcapi.requests,x-correlation-id:demo-final-212255	4	{"eventId":"07669372-de8b-438a-8156-6d5e2d07cdd6","eventType":"REQUEST_CREATED","eventVersion":1,"source":"sigcapi.requests","timestamp":"2026-11-20T02:23:06.153414144Z","requestId":4,"tipoSolicitud":"QUEJA","estadoAnterior":null,"estadoNuevo":"CREADO","actor":"921230401","actorId":5,"observaciones":null}
+Partition:1	x-event-id:df2bc651-64dc-4828-9a3e-00c4ffd85ef5,x-event-type:REQUEST_STATUS_CHANGED,x-event-version:1,x-source:sigcapi.requests,x-correlation-id:demo-final-212255	4	{"eventId":"df2bc651-64dc-4828-9a3e-00c4ffd85ef5","eventType":"REQUEST_STATUS_CHANGED","eventVersion":1,"source":"sigcapi.requests","timestamp":"2026-11-20T02:23:06.536905102Z","requestId":4,"tipoSolicitud":"QUEJA","estadoAnterior":"CREADO","estadoNuevo":"CERRADO","actor":"1000000001","actorId":1,"observaciones":"Respuesta de fondo enviada"}

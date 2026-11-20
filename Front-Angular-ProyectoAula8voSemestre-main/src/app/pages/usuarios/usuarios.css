@@ -1,0 +1,50 @@
+@import '../documentos/documentos.css';
+
+.usercell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--primary) 15%, transparent);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.mono {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8125rem;
+}
+
+.sigc-badge--outline {
+  border: 1px solid var(--border);
+  background: transparent;
+}
+
+.text-danger {
+  color: var(--destructive);
+  font-weight: 600;
+}
+
+.detail-box {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--muted);
+}
+
+.detail-box p {
+  margin: 0.35rem 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}

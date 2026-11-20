@@ -1,0 +1,7 @@
+# Mutation radicarSolicitud (CONSULTOR) → API REST POST /requests/save → evento REQUEST_CREATED
+# 2026-11-19 21:23:05
+
+> mutation { radicarSolicitud(input: { titulo: "Demora en respuesta de peticion", descripcion: "Radicada via gateway GraphQL para la demostracion final", nombreCompleto: "Ciudadana Demo", correo: "ciudadana.921230401@example.com", documento: "921230401", ciudad: "Neiva", telefono: "3000000000", tipo: QUEJA, aceptaPoliticaDatos: true, fechaVencimiento: "2026-12-04", adjuntos: [{ nombre: "soporte.txt", contenidoBase64: "U29wb3J0ZSBkZSBsYSBQUVIgcmFkaWNhZGEgZGVzZGUgZWwgZ2F0ZXdheSBHcmFwaFFM", tipoMime: "text/plain" }] }) { id titulo tipo estado documento creadaEn } }
+{"data":{"radicarSolicitud":{"id":"4","titulo":"Demora en respuesta de peticion","tipo":"QUEJA","estado":"CREADO","documento":"921230401","creadaEn":"2026-11-19T21:23:06.140997"}}}
+[HTTP 200 � 0.256101s]
+

@@ -1,0 +1,25 @@
+# GET /requests/findById/1 (mailStatus=true)
+# 2026-10-15 00:10:53
+$ call GET /requests/findById/1
+
+HTTP 200  GET /requests/findById/1
+{
+    "data": {
+        "acceptedDataPolicy": true,
+        "city": "Neiva",
+        "createdAt": "2026-10-15T00:09:56",
+        "description": "Radiqué una petición hace 20 días y no he recibido respuesta.",
+        "document": "1075000001",
+        "email": "ciudadano.demo@example.com",
+        "expirationDate": "2030-12-31",
+        "fullName": "Ciudadano Demo Kafka",
+        "id": 1,
+        "mailStatus": true,
+        "phone": "3001234567",
+        "status": "CERRADO",
+        "title": "Demora en respuesta a mi petición",
+        "type": "QUEJA"
+    },
+    "exito": true,
+    "mensaje": "Solicitud encontrada."
+}

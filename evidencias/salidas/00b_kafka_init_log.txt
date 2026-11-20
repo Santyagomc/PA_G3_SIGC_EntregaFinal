@@ -1,0 +1,100 @@
+# Log de kafka-init (creación de tópicos)
+# 2026-10-15 00:08:51
+$ docker compose logs --no-color kafka-init
+
+sigc-kafka-init  | [2026-10-06 04:55:28,876] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:28,961] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:29,175] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:29,445] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:29,955] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:30,788] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:31,601] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:32,643] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:33,464] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:34,492] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:35,515] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:36,571] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:37,613] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:38,630] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:39,640] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:40,563] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:41,659] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:42,689] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:43,726] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:44,923] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:45,988] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:47,000] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:48,043] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:48,967] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:50,024] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:51,521] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:52,592] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:53,661] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:54,593] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:55,502] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:56,609] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:57,568] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:58,646] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:55:59,589] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:00,610] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:01,650] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:02,655] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:03,679] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:04,694] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:05,783] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:06,808] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:07,738] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:08,835] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:09,910] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:10,930] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:11,858] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:12,868] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:14,013] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:15,184] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:16,204] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:17,300] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:18,263] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | [2026-10-06 04:56:19,323] WARN [AdminClient clientId=adminclient-1] Connection to node -1 (kafka/172.22.0.3:29092) could not be established. Node may not be available. (org.apache.kafka.clients.NetworkClient)
+sigc-kafka-init  | Error while executing topic command : Timed out waiting for a node assignment. Call: createTopics
+sigc-kafka-init  | [2026-10-06 04:56:51,589] ERROR org.apache.kafka.common.errors.TimeoutException: Timed out waiting for a node assignment. Call: createTopics
+sigc-kafka-init  |  (org.apache.kafka.tools.TopicCommand)
+sigc-kafka-init  | WARNING: Due to limitations in metric names, topics with a period ('.') or underscore ('_') could collide. To avoid issues it is best to use either, but not both.
+sigc-kafka-init  | ==== Tópicos SIGC ====
+sigc-kafka-init  | Topic: audit-events	TopicId: s3fLB1nNTvGqWUBN2dcGKw	PartitionCount: 3	ReplicationFactor: 1	Configs: cleanup.policy=delete,retention.ms=604800000
+sigc-kafka-init  | 	Topic: audit-events	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | Topic: audit-events.DLT	TopicId: OLMBvS3DSvaBMqFOwrtFiw	PartitionCount: 3	ReplicationFactor: 1	Configs: retention.ms=2592000000
+sigc-kafka-init  | 	Topic: audit-events.DLT	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events.DLT	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events.DLT	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | WARNING: Due to limitations in metric names, topics with a period ('.') or underscore ('_') could collide. To avoid issues it is best to use either, but not both.
+sigc-kafka-init  | ==== Tópicos SIGC ====
+sigc-kafka-init  | Topic: audit-events	TopicId: s3fLB1nNTvGqWUBN2dcGKw	PartitionCount: 3	ReplicationFactor: 1	Configs: cleanup.policy=delete,retention.ms=604800000
+sigc-kafka-init  | 	Topic: audit-events	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | Topic: audit-events.DLT	TopicId: OLMBvS3DSvaBMqFOwrtFiw	PartitionCount: 3	ReplicationFactor: 1	Configs: retention.ms=2592000000
+sigc-kafka-init  | 	Topic: audit-events.DLT	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events.DLT	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events.DLT	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | WARNING: Due to limitations in metric names, topics with a period ('.') or underscore ('_') could collide. To avoid issues it is best to use either, but not both.
+sigc-kafka-init  | ==== Tópicos SIGC ====
+sigc-kafka-init  | Topic: audit-events	TopicId: s3fLB1nNTvGqWUBN2dcGKw	PartitionCount: 3	ReplicationFactor: 1	Configs: cleanup.policy=delete,retention.ms=604800000
+sigc-kafka-init  | 	Topic: audit-events	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | Topic: audit-events.DLT	TopicId: OLMBvS3DSvaBMqFOwrtFiw	PartitionCount: 3	ReplicationFactor: 1	Configs: retention.ms=2592000000
+sigc-kafka-init  | 	Topic: audit-events.DLT	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events.DLT	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events.DLT	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | WARNING: Due to limitations in metric names, topics with a period ('.') or underscore ('_') could collide. To avoid issues it is best to use either, but not both.
+sigc-kafka-init  | ==== Tópicos SIGC ====
+sigc-kafka-init  | Topic: audit-events	TopicId: s3fLB1nNTvGqWUBN2dcGKw	PartitionCount: 3	ReplicationFactor: 1	Configs: cleanup.policy=delete,retention.ms=604800000
+sigc-kafka-init  | 	Topic: audit-events	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | Topic: audit-events.DLT	TopicId: OLMBvS3DSvaBMqFOwrtFiw	PartitionCount: 3	ReplicationFactor: 1	Configs: retention.ms=2592000000
+sigc-kafka-init  | 	Topic: audit-events.DLT	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events.DLT	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+sigc-kafka-init  | 	Topic: audit-events.DLT	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
