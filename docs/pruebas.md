@@ -45,7 +45,7 @@ Fecha de ejecución: 19/11/2026. Entorno: Windows 11, Docker 29.4.3 / Compose 5.
 | E21 | Recuperación de la API | El gateway vuelve a responder (HALF_OPEN → CLOSED) | `solicitudes` y `resumenIndicadores` OK, `desactualizado: false` | ✅ | Medido | `18_recuperacion.txt` |
 | E22 | Idempotencia ante evento duplicado | Se ignora el duplicado | Ver Entrega 2 | ✅ | Simulado | `evidencias/salidas/10_duplicado.txt`, `11_idempotencia.txt` |
 | E23 | Mensajes inválidos → DLT | Van a `audit-events.DLT` y se guardan en `failed_events` | Ver Entrega 2 | ✅ | Simulado | `evidencias/salidas/12–14_*.txt` |
-| E24 | Dashboard del frontend con indicadores del gateway | Tarjetas con datos de `resumenIndicadores` | Ver capturas | ✅ | Medido | `evidencias/capturas/` |
+| E24 | Dashboard y gestión de solicitudes del frontend | Indicadores de `resumenIndicadores` y listado de PQR | Indicadores 4/1/3 y 14·7·6 vía gateway; listado con 4 PQR (revalidado con capturas nuevas el 19/11/2026) | ✅ | Medido | `evidencias/capturas/02_*.png`, `03_*.png` |
 | E25 | Verificación desde el ZIP en carpeta nueva con volúmenes vacíos (arranque en frío) | Toda la arquitectura levanta siguiendo solo el README; la primera radicación responde OK | La arquitectura levantó y el login, la consulta compuesta con historial y los indicadores funcionaron. La **primera** `radicarSolicitud` tras el arranque superó el timeout de lectura de 5 s y el cliente recibió `UNAVAILABLE`, aunque la PQR sí se creó y Kafka la auditó. Al no reintentarse la mutation, no hubo duplicado | ⚠️ Parcial | Medido | Hallazgo documentado en la sección 3 |
 
 ## 3. Hallazgo: timeout en arranque en frío
