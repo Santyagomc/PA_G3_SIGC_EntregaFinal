@@ -292,7 +292,9 @@ API disponible de nuevo
   <tr><td>Correlation ID gateway → API → Kafka → consumidores</td><td class="ok">Lograda</td><td>Correlación por logs; sin OpenTelemetry.</td></tr>
   <tr><td>Docker Compose con todos los servicios</td><td class="ok">Lograda</td><td>Ejecución local.</td></tr>
   <tr><td>Frontend consumiendo el gateway</td><td class="par">Parcial</td><td>Solo los indicadores del dashboard usan GraphQL; el resto usa REST.</td></tr>
-  <tr><td>Envío real de correo</td><td class="par">Parcial</td><td>Modo simulado por defecto; requiere credenciales SMTP.</td></tr>
+  <tr><td>Radicación vía gateway en arranque en frío</td><td>Parcial</td><td>La primera escritura tras arrancar puede superar el timeout de 5 s: el cliente ve UNAVAILABLE aunque la PQR se crea (sin duplicado). Ajustable con API_READ_TIMEOUT_MS.</td></tr>
+<tr><td>Pantalla "Gestión de solicitudes" del frontend</td><td>Parcial</td><td>Mostraba 0 resultados porque esperaba una lista y la API devuelve una página; se corrigió en el código y el frontend compila, pero la pantalla no se volvió a capturar.</td></tr>
+<tr><td>Envío real de correo</td><td class="par">Parcial</td><td>Modo simulado por defecto; requiere credenciales SMTP.</td></tr>
   <tr><td>Métricas</td><td class="par">Parcial</td><td>Actuator; sin Prometheus/Grafana.</td></tr>
   <tr><td>SSE / WebSocket</td><td class="pen">Pendiente (decisión)</td><td>No se requiere tiempo real en el caso de uso.</td></tr>
   <tr><td><code>GET /documents/my</code></td><td class="pen">Pendiente</td><td>Definido en el contrato como propuesta.</td></tr>

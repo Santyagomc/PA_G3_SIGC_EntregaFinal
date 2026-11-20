@@ -46,8 +46,13 @@ Fecha de ejecución: 19/11/2026. Entorno: Windows 11, Docker 29.4.3 / Compose 5.
 | E22 | Idempotencia ante evento duplicado | Se ignora el duplicado | Ver Entrega 2 | ✅ | Simulado | `evidencias/salidas/10_duplicado.txt`, `11_idempotencia.txt` |
 | E23 | Mensajes inválidos → DLT | Van a `audit-events.DLT` y se guardan en `failed_events` | Ver Entrega 2 | ✅ | Simulado | `evidencias/salidas/12–14_*.txt` |
 | E24 | Dashboard del frontend con indicadores del gateway | Tarjetas con datos de `resumenIndicadores` | Ver capturas | ✅ | Medido | `evidencias/capturas/` |
+| E25 | Verificación desde el ZIP en carpeta nueva con volúmenes vacíos (arranque en frío) | Toda la arquitectura levanta siguiendo solo el README; la primera radicación responde OK | La arquitectura levantó y el login, la consulta compuesta con historial y los indicadores funcionaron. La **primera** `radicarSolicitud` tras el arranque superó el timeout de lectura de 5 s y el cliente recibió `UNAVAILABLE`, aunque la PQR sí se creó y Kafka la auditó. Al no reintentarse la mutation, no hubo duplicado | ⚠️ Parcial | Medido | Hallazgo documentado en la sección 3 |
 
-## 3. Trabajo futuro (no medido)
+## 3. Hallazgo: timeout en arranque en frío
+
+En la verificación desde cero (E25), la primera escritura tras arrancar la API (JVM y Hibernate en frío, primer guardado de adjuntos) tardó más de 5 s. El gateway cortó la espera (`API_READ_TIMEOUT_MS=5000`) y respondió `UNAVAILABLE`, pero la API completó la operación. Es el riesgo señalado en clase: *un timeout demasiado corto también genera fallos*. Como las mutations no se reintentan, no se duplicó la PQR. Mitigaciones propuestas (no implementadas): timeout mayor solo para mutations (p. ej. 15 s, configurable con `API_READ_TIMEOUT_MS`), clave de idempotencia en la radicación y un *warm-up* de la API antes de declararla saludable. Mientras tanto, si ocurre, el usuario puede verificar con `misSolicitudes` antes de reintentar.
+
+## 4. Trabajo futuro (no medido)
 
 | Caso | Motivo |
 |---|---|

@@ -2,15 +2,15 @@ Proyecto: SIGC: Sistema Inteligente de Gestión de PQR con arquitectura distribu
 Asignatura: Programación Avanzada — Grupo 3 (Equipo 4) — Docente: Diego Fernando Vargas Ramírez
 Integrantes: Santiago Murcia Cangrejo · Hallys Andrea Escobar Paloma (Ingeniería de Software, 9.º semestre, jornada día)
 
-Repositorio público (código final): <<REPO_URL>>
-Versión entregada: etiqueta v3.0.0 (commit <<COMMIT_SHA>>) — el ZIP "G3 SIGC Entrega final.zip" corresponde a esta misma versión.
+Repositorio público (código final): https://github.com/Santyagomc/PA_G3_SIGC_EntregaFinal
+Versión entregada: etiqueta v3.0.0 (el código del commit se indica en el comentario de la entrega; también: git rev-parse v3.0.0) — el ZIP "G3 SIGC Entrega final.zip" corresponde a esta misma versión.
 
 Documentación:
-- README principal (instalación, ejecución, puertos, variables, arquitectura, limitaciones): <<REPO_URL>>/blob/v3.0.0/README.md
-- Gateway GraphQL: <<REPO_URL>>/blob/v3.0.0/gateway/README.md
-- Contratos (OpenAPI, AsyncAPI, JSON Schema, GraphQL): <<REPO_URL>>/tree/v3.0.0/contracts
-- Kafka (tópicos, eventos, idempotencia, errores): <<REPO_URL>>/blob/v3.0.0/docs/kafka.md
-- Evidencias y salidas de pruebas: <<REPO_URL>>/tree/v3.0.0/evidencias
+- README principal (instalación, ejecución, puertos, variables, arquitectura, limitaciones): https://github.com/Santyagomc/PA_G3_SIGC_EntregaFinal/blob/v3.0.0/README.md
+- Gateway GraphQL: https://github.com/Santyagomc/PA_G3_SIGC_EntregaFinal/blob/v3.0.0/gateway/README.md
+- Contratos (OpenAPI, AsyncAPI, JSON Schema, GraphQL): https://github.com/Santyagomc/PA_G3_SIGC_EntregaFinal/tree/v3.0.0/contracts
+- Kafka (tópicos, eventos, idempotencia, errores): https://github.com/Santyagomc/PA_G3_SIGC_EntregaFinal/blob/v3.0.0/docs/kafka.md
+- Evidencias y salidas de pruebas: https://github.com/Santyagomc/PA_G3_SIGC_EntregaFinal/tree/v3.0.0/evidencias
 
 Archivos adjuntos: "G3 SIGC Informe final.pdf", "G3 SIGC Entrega final.zip" y "G3 SIGC Evidencias de funcionamiento.pdf" (Actividad 3.1).
 Ejecución: copiar .env.example a .env y ejecutar "docker compose up --build -d" (ver README).
